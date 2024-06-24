@@ -21,7 +21,7 @@ const ForgotPassword = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex border-2 h-screen bg-indigo-600 shadow-lg justify-center items-center">
+      <div className="flex border-2 h-screen bg-black shadow-lg justify-center items-center">
         <div className="w-96 rounded-md bg-white p-5">
           <h1 className="pt-2 pb-3">Find your account</h1>
           <hr />
@@ -58,7 +58,7 @@ const ForgotPassword = () => {
 
             <button
               type="submit"
-              className="bg-blue-500 p-1 rounded-lg text-white font-semibold"
+              className="bg-black p-1 rounded-lg text-white font-semibold"
             >
               Send OTP
             </button>

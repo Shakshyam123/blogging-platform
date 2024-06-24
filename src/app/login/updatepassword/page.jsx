@@ -25,7 +25,7 @@ const UpdatePassword = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex border-2 h-screen bg-indigo-600 shadow-lg justify-center items-center">
+      <div className="flex border-2 h-screen bg-black shadow-lg justify-center items-center">
         <div className="w-96 rounded-md bg-white p-5">
           <h1 className="font-bold text-xl mb-4">Update Password</h1>
           <input

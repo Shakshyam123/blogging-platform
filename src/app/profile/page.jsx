@@ -1,18 +1,47 @@
-// pages/index.js
+"use client";
+import axios from "axios";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
-export default function Home() {
+export default function Profile() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        const response = await axios.get("http://localhost:5000/hello", {
+          params: { email: "user@example.com" },
+        });
+        setData(response.data); // Set the fetched data to state
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched or an error occurs
+      }
+    }
+    getData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!data) {
+    return <div>Error loading data</div>;
+  }
+
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
       <div className="max-w-7xl mx-auto p-6 bg-white shadow-md rounded-lg w-full">
-        {/* Header */}
         <div className="flex items-center justify-between border-b pb-4 mb-4">
           <div className="flex items-center space-x-4">
             <Image
               src="/img.jpg"
               alt="Example Image"
               width={500}
-              height={100}
+              height={500}
               className="h-72 w-72 rounded-full"
             />
           </div>
@@ -21,13 +50,12 @@ export default function Home() {
         <div className="md:flex md:space-x-6">
           <div className="md:w-1/3 flex flex-col items-center">
             <div className="text-center">
-              <h2 className="text-xl font-semibold">Shakshyam Bohara</h2>
-              <p className="text-gray-600">web Designer</p>
+              <h2 className="text-xl font-semibold">
+                {data.first_name} {data.last_name}
+              </h2>
+              <p className="text-gray-600">Web Designer</p>
               <p className="text-sm text-gray-500">
-                <i className="fas fa-map-marker-alt"></i> Nepal,np
-              </p>
-              <p className="text-lg font-bold">
-                8,6 <i className="fas fa-star text-blue-500"></i>
+                <i className="fas fa-map-marker-alt"></i> Nepal, NP
               </p>
             </div>
             <div className="flex justify-center space-x-4 mt-4">
@@ -78,7 +106,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Web-Design</span>
+                  <span>Web Design</span>
                   <div className="w-1/2 bg-gray-200 rounded h-2">
                     <div
                       className="bg-blue-500 h-2 rounded"
@@ -119,12 +147,12 @@ export default function Home() {
                     </a>
                   </p>
                   <p className="text-sm text-gray-600">
-                    Address: Nepal,Banepa 07,kavre
+                    Address: Nepal, Banepa 07, Kavre
                   </p>
                   <p className="text-sm text-gray-600">
                     E-mail:{" "}
                     <a
-                      href="mailto:hello@rsmarquetech.com"
+                      href="mailto:boharashakshyam@gmail.com"
                       className="text-blue-500"
                     >
                       boharashakshyam@gmail.com
@@ -134,9 +162,9 @@ export default function Home() {
                 <div>
                   <h4 className="font-bold">Basic Information</h4>
                   <p className="text-sm text-gray-600">
-                    Birthday: nov 25, 2008
+                    Birthday: Nov 25, 2008
                   </p>
-                  <p className="text-sm text-gray-600">Gender: Male</p>
+                  <p className="text-sm text-gray-600">Gender: {data.gender}</p>
                 </div>
               </div>
             </div>

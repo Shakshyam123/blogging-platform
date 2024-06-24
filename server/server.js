@@ -62,6 +62,23 @@ app.post("/nepal", (req, res) => {
       res.status(201).json({ result: "User registered successfully", result });
   });
 });
+app.get("/hello", (req, res) => {
+  const email = "boharashakshyam@gmail.com";
+  const sql =
+    "SELECT first_name, last_name, email, password, birthdate, gender, country FROM register WHERE email=?";
+
+  db.query(sql, [email], (err, results) => {
+    if (err) {
+      console.error("Error fetching data from database:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: "No users found" });
+    }
+    console.log(results[0]);
+    res.json(results[0]);
+  });
+});
 app.post("/name", (req, res) => {
   const { email, password } = req.body;
   console.log(email);
@@ -84,6 +101,11 @@ app.post("/name", (req, res) => {
     }
     res.json(results[0]);
   });
+});
+app.post("/blogPost", (req, res) => {
+  const data = req.body;
+  console.log(data);
+  res.send("connected");
 });
 
 app.listen(PORT, () => {
