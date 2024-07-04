@@ -24,31 +24,47 @@ function Form() {
       console.log(error);
     }
   }
-  useEffect(() => {
-    onSubmit();
-  }, []);
 
   return (
     <div>
       <div className="flex border-2 h-fit bg-black shadow-lg justify-center items-center ">
         <div className=" mt-11 rounded-md bg-white">
-          <form onSubmit={handleSubmit(onSubmit)} className="w-96 p-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="w-96 p-5 mb-3">
             <h1 className="text-center font-extrabold text-5xl">Form</h1>
-            <label>Heading:</label>
-            <input type="text" placeholder="heading" {...register} />
-            <textarea {...register} />
+            <label>AuthorName:</label>
+            <input
+              type="text"
+              placeholder="AuthorName"
+              {...register("AuthorName", {})}
+            />
             <br />
-            <label>Title:</label>
+            <label>imageLink:</label>
+            <input
+              type="text"
+              placeholder="imageLink"
+              {...register("imageLink", {})}
+            />
+            <br />
 
-            <input type="text" placeholder="title" {...register} />
-            <textarea {...register} />
-            <textarea {...register("title", {})} />
+            <label>title:</label>
+            <input type="text" placeholder="title" {...register("title", {})} />
+
             <br />
-            <label>Content:</label>
-            <input type="text" placeholder="content" {...register} />
-            <textarea {...register} />
-            <textarea {...register("theading", {})} />
-            <textarea {...register("content", {})} />
+            <label>heading:</label>
+
+            <textarea
+              type="text"
+              placeholder="heading"
+              {...register("heading", {})}
+            />
+            <br />
+            <label>content:</label>
+
+            <textarea
+              type="text"
+              placeholder="content"
+              {...register("content", {})}
+            />
             <button
               type="submit"
               className="border-3 text-white border-indigo-700 bg-black py-1 w-full rounded-md mt-3"

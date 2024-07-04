@@ -103,11 +103,41 @@ app.post("/name", (req, res) => {
   });
 });
 app.post("/blogPost", (req, res) => {
-  const data = req.body;
-  console.log(data);
-  res.send("connected");
+  const { AuthorName, imageLink, title, heading, content } = req.body;
+
+  if (!AuthorName || !imageLink || !title || !heading || !content) {
+    return res.status(400).send("All fields are required");
+  }
+
+  const sql =
+    "INSERT INTO blog_posts (author_name, image_link, title, heading, content) VALUES (?, ?, ?, ?, ?)";
+
+  db.query(
+    sql,
+    [AuthorName, imageLink, title, heading, content],
+    (error, results) => {
+      if (error) {
+        console.error("Error inserting blog post:", error);
+        return res.status(500).send("Error inserting blog post");
+      } else res.status(200).send("Blog post inserted successfully");
+    }
+  );
 });
 
+app.get("/getBlog", (req, res) => {
+  const sql = "SELECT * FROM blog_posts";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching data from blog_posts:", err);
+      res.status(500).send("Error fetching blog posts");
+    } else {
+      console.log("Blog posts fetched successfully:", results);
+      res.status(200).json(results);
+    }
+  });
+});
+
+module.exports = app;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
