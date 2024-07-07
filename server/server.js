@@ -103,9 +103,9 @@ app.post("/name", (req, res) => {
   });
 });
 app.post("/blogPost", (req, res) => {
-  const { AuthorName, imageLink, title, heading, content } = req.body;
+  const { author_name, image_link, title, heading, content } = req.body;
 
-  if (!AuthorName || !imageLink || !title || !heading || !content) {
+  if (!author_name || !image_link || !title || !heading || !content) {
     return res.status(400).send("All fields are required");
   }
 
@@ -114,7 +114,7 @@ app.post("/blogPost", (req, res) => {
 
   db.query(
     sql,
-    [AuthorName, imageLink, title, heading, content],
+    [author_name, image_link, title, heading, content],
     (error, results) => {
       if (error) {
         console.error("Error inserting blog post:", error);
@@ -134,6 +134,20 @@ app.get("/getBlog", (req, res) => {
       console.log("Blog posts fetched successfully:", results);
       res.status(200).json(results);
     }
+  });
+});
+app.post("/contact", (req, res) => {
+  const { Name, Email, PhoneNumber, Message } = req.body;
+  if (!Name || !Email || !PhoneNumber || !Message)
+    res.status(400).send("alll fields are required");
+  const sql =
+    "INSERT into contacts (Name,Email,PhoneNumber,Message) VALUES(?,?,?,?)";
+  db.query(sql, [Name, Email, PhoneNumber, Message], (error, result) => {
+    if (error) {
+      console.error("Error inserting contact", error);
+      return res.status(400).send("Error inserting into contact");
+    } else res.status(200).send("contact inserted successfully");
+    res.status(400).send(result);
   });
 });
 

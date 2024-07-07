@@ -18,16 +18,16 @@ export default function About() {
             with like-minded individuals.
           </p>
         </div>
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Our Team</h2>
+        <div className="mb-2">
+          <h2 className="text-2xl font-bold mb-3">Our Team</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {teamMembers.map((member, index) => (
               <div key={index} className="text-center">
                 <Image
                   src={member.image}
                   alt={member.name}
-                  width={150}
-                  height={150}
+                  width={200}
+                  height={200}
                   className="rounded-full mx-auto"
                 />
                 <h3 className="text-xl font-semibold mt-4">{member.name}</h3>
@@ -36,7 +36,9 @@ export default function About() {
             ))}
           </div>
         </div>
-        <div>
+      </div>
+      <div className="bg-gray-400 ">
+        <div className="p-5 ">
           <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
           <p>
             Have questions or want to get in touch? Feel free to reach out to us
@@ -46,7 +48,7 @@ export default function About() {
                 href="mailto:contact@blogplatform.com"
                 className="text-blue-600"
               >
-                contact@blogplatform.com
+                Contact us page
               </a>
               .
             </Link>
@@ -61,11 +63,11 @@ const teamMembers = [
   {
     name: "Shakshyam Bohara",
     role: "Founder & CEO",
-    image: "/images/alice.jpg",
+    image: "/image3.jpg",
   },
   {
     name: "Ram Thapa",
     role: "helper",
-    image: "/images/bob.jpg",
+    image: "/ram.jpg",
   },
 ];
