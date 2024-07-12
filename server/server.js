@@ -87,7 +87,7 @@ app.post("/name", (req, res) => {
     res.status(400).send("email and password are required");
     return;
   }
-  const query = `SElECT * FROM register WHERE  email='${email}' AND password='${password}'`;
+  const query = `SELECT * FROM register WHERE  email='${email}' AND password='${password}'`;
 
   const values = [email, password];
 
@@ -138,19 +138,58 @@ app.get("/getBlog", (req, res) => {
 });
 app.post("/contact", (req, res) => {
   const { Name, Email, PhoneNumber, Message } = req.body;
+  console.log(req.body);
+
   if (!Name || !Email || !PhoneNumber || !Message)
-    res.status(400).send("alll fields are required");
+    return res.status(400).send("all fields are required");
   const sql =
     "INSERT into contacts (Name,Email,PhoneNumber,Message) VALUES(?,?,?,?)";
   db.query(sql, [Name, Email, PhoneNumber, Message], (error, result) => {
     if (error) {
       console.error("Error inserting contact", error);
       return res.status(400).send("Error inserting into contact");
-    } else res.status(200).send("contact inserted successfully");
-    res.status(400).send(result);
+    } else return res.status(200).send("contact inserted successfully");
   });
 });
 
+app.get(`/getPost/:id`, (req, res) => {
+  const id = req.params.id;
+  const sql = `SELECT * FROM blog_posts WHERE id=?`;
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error("Error fetching data from blog_posts:", err);
+      res.status(500).send("Error fetching blog posts");
+    } else {
+      console.log("Blog posts fetched successfully:", results);
+      res.status(200).json(results);
+    }
+  });
+});
+app.delete("/deletePost/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = "DELETE FROM blog_posts WHERE id=?";
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error("Error in deleting Data", err);
+      res.status(500).send("Error in Deleting Data");
+    } else {
+      console.log("Data Deleted Successfully", result);
+      res.status(200).send(result);
+    }
+  });
+});
+const successMessage = {
+  message: "login success",
+  token: "hello",
+};
+app.post("/name", (req, res) => {
+  const login = req.body;
+  if (login.name && login.password) {
+    res.status(200).send("successfully loginned");
+  } else {
+    res.status(422).send("something is missing  ");
+  }
+});
 module.exports = app;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);

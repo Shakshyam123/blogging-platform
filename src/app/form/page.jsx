@@ -35,14 +35,14 @@ function Form() {
             <input
               type="text"
               placeholder="AuthorName"
-              {...register("AuthorName", {})}
+              {...register("author_name", {})}
             />
             <br />
             <label>imageLink:</label>
             <input
               type="text"
               placeholder="imageLink"
-              {...register("imageLink", {})}
+              {...register("image_link", {})}
             />
             <br />
 

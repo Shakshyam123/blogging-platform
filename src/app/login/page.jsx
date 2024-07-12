@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "../navbar/page";
-
+import jsCookie from "js-cookie";
 function LoginForm() {
   const {
     register,
@@ -16,8 +16,8 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [successMessage, setSuccessMessage] = useState("");
-  const [loginSuccess, setLoginSuccess] = useState("");
   const [error, setError] = useState("");
+  const cookie = jsCookie.get("token");
 
   const onSubmit = async (data) => {
     try {
@@ -25,6 +25,7 @@ function LoginForm() {
         email: data.email,
         password: data.password,
       });
+      jsCookie.set("token", response.data.token, { path: "" });
 
       console.log(response.data);
 

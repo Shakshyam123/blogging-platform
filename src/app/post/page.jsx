@@ -1,6 +1,10 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Navbar from "@/app/navbar/page";
+import { useSearchParams } from "next/navigation";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHandsClapping,
@@ -10,30 +14,51 @@ import {
   faShare,
   faEllipsis,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
-function Post({ heading, authorName, content, title, imageLink }) {
+function Post() {
+  const [post, setPost] = useState(null);
+  const searchParams = useSearchParams();
+
+  async function getData(id) {
+    try {
+      const response = await axios.get(`http://localhost:5000/getPost/${id}`);
+      console.log(response);
+      setPost(response.data[0]);
+    } catch (error) {
+      console.error("Error fetching post data:", error);
+    }
+  }
+
+  useEffect(() => {
+    const id = searchParams.get("id");
+    if (id) {
+      getData(id);
+    }
+  }, [searchParams]);
+
+  if (!post) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <Navbar />
       <div>
         <div className="text-center m-10">
-          <div className="">
-            <h1 className="text-4xl font-extrabold">
-              Are You Smart Enough To Find The Radius?
-            </h1>
-            <p className="mr-96  text-xl text-gray-600 m-4">
-              This is a heading
-            </p>
+          <div>
+            <h1 className="text-4xl font-extrabold mr-48">{post.title}</h1>
+            <p className="mr-16  text-xl text-gray-600 m-4">{post.heading}</p>
             <div className="flex pl-72 gap-4">
               <Image
-                src="/shakshyam.jpg"
+                src={post.image_link}
                 alt="Example Image"
                 width={50}
                 height={50}
                 className="rounded-full h-14 w-14"
               />
               <div className="mb-4 text-left">
-                Shakshyam bohara
+                {post.author_name}
                 <br />
                 Published in Level Up Coding · 9 min read · Apr 4, 2023
               </div>
@@ -45,13 +70,13 @@ function Post({ heading, authorName, content, title, imageLink }) {
                   <p className="size-5">
                     <FontAwesomeIcon icon={faHandsClapping} />
                   </p>
-                  3.6k
+                  {post.likes}
                 </div>
                 <div className="flex gap-3">
                   <p className="size-5">
                     <FontAwesomeIcon icon={faComment} />
                   </p>
-                  37
+                  {post.comments}
                 </div>
               </div>
               <div className="flex gap-8">
@@ -65,32 +90,30 @@ function Post({ heading, authorName, content, title, imageLink }) {
                   <FontAwesomeIcon icon={faShare} />
                 </p>
                 <p className="size-5">
-                  <FontAwesomeIcon icon={faEllipsis} />
+                  <div className="relative">
+                    <button className="relative">
+                      {" "}
+                      <FontAwesomeIcon icon={faEllipsis} />
+                    </button>
+                  </div>
                 </p>
               </div>
             </div>
             <Image
-              src="/img.jpg"
+              src={post.image_link}
               alt="Example Image"
               width={600}
               height={200}
               className="ml-72 mt-11 h-96"
             />
-            <h1 className="mt-6 font-serif font-bold text-3xl">
-              This is a heading
+            <h1
+              className="mt-6 font-serif font-bold text-3xl ml-60"
+              style={{ width: "700px" }}
+            >
+              {post.heading}
             </h1>
             <div className="text-left pl-72 font-extralight w-auto mr-60">
-              {" "}
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industr standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum
+              {post.content}
             </div>
           </div>
         </div>

@@ -18,6 +18,7 @@ function Contact() {
       const response = await axios({
         method: "post",
         url: "http://localhost:5000/contact",
+
         data: data,
       });
       console.log("this is a response", response);
@@ -35,7 +36,6 @@ function Contact() {
           How Can We Help You?
         </h1>
         <h1 className="text-3xl text-white text-center p-4">
-          If you are an existing costumer please{" "}
           <a href="" className="text-blue-700">
             contact us
           </a>{" "}
@@ -68,7 +68,7 @@ function Contact() {
                 className="border w-full text-base px-2 py-1 focus:outline-none p-2 bg-slate-200"
                 type="email"
                 placeholder="Email"
-                {...register("email", {
+                {...register("Email", {
                   required: "! Please enter a valid email !",
                   maxLength: {
                     value: 30,
@@ -85,7 +85,7 @@ function Contact() {
                 })}
               />
               <div className="text-red-500 text-sm">
-                {errors.email && errors.email.message}
+                {errors.Email && errors.Email.message}
               </div>
               <label className="block text-base mb-2 text-left font-medium mt-3 text-white">
                 PhoneNumber
@@ -120,7 +120,7 @@ function Contact() {
                 rows="4"
                 cols="50"
                 placeholder="Your Message..."
-                {...register("Your Message", {})}
+                {...register("Message", {})}
                 className="border w-full text-base px-2 py-1 p-2 bg-slate-200"
               />
               <button

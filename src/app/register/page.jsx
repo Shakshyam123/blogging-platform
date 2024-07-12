@@ -52,8 +52,11 @@ function Register() {
   return (
     <div>
       <Navbar />
-      <div className="flex border-2 h-fit bg-black shadow-lg justify-center items-center ">
-        <div className=" mt-11 rounded-md bg-white">
+      <div
+        className="flex border-2 h-fit  shadow-lg justify-center items-center "
+        style={{ backgroundColor: "#282C35" }}
+      >
+        <div className=" mt-11 rounded-md">
           <form onSubmit={handleSubmit(onSubmit)} className="w-96 p-5">
             <h1 className="text-4xl block font-semibold text-center">
               Register
