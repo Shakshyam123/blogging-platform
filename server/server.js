@@ -5,15 +5,20 @@ const cors = require("cors");
 
 const app = express();
 const PORT = 5000;
-
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const { message } = require("antd");
 app.use(cors());
 app.use(bodyParser.json());
+const JWT_SECRETE = "this is a serious password";
 
+const salt = 10;
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "root",
   database: "express",
+  JWT_SECRET: process.env.JWT_SECRET,
 });
 
 db.connect((err) => {
@@ -43,23 +48,31 @@ app.post("/nepal", (req, res) => {
   }
 
   const sql =
-    "INSERT INTO register (first_name, last_name, email, password, birthdate, gender, country) VALUES (?, ?, ?, ?, ?, ?, ?)";
-  const values = [
-    first_name,
-    last_name,
-    email,
-    password,
-    birthdate,
-    gender,
-    country,
-  ];
-
-  db.query(sql, values, (err, result) => {
+    "INSERT INTO register (first_name, last_name, email, password, birthdate, gender, country) VALUES (?, ?, ?,?, ?, ?, ?)";
+  bcrypt.hash(password, salt, (err, hash) => {
     if (err) {
-      console.error("Error inserting data into the database:", err);
-      return res.status(500).json({ error: "Internal server error" });
-    } else
-      res.status(201).json({ result: "User registered successfully", result });
+      console.log(err);
+    }
+
+    const values = [
+      first_name,
+      last_name,
+      email,
+      hash,
+      birthdate,
+      gender,
+      country,
+    ];
+
+    db.query(sql, values, (err, result) => {
+      if (err) {
+        console.error("Error inserting data into the database:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      } else
+        res
+          .status(201)
+          .json({ result: "User registered successfully", result });
+    });
   });
 });
 app.get("/hello", (req, res) => {
@@ -79,29 +92,26 @@ app.get("/hello", (req, res) => {
     res.json(results[0]);
   });
 });
-app.post("/name", (req, res) => {
-  const { email, password } = req.body;
-  console.log(email);
-  console.log(password);
-  if (!email || !password) {
-    res.status(400).send("email and password are required");
-    return;
-  }
-  const query = `SELECT * FROM register WHERE  email='${email}' AND password='${password}'`;
+// app.post("/name", (req, res) => {
+//   const { email, password } = req.body;
 
-  const values = [email, password];
+//   if (!email || !password) {
+//     res.status(400).send("email and password are required");
+//     return;
+//   }
+//   const query = ` SELECT * FROM register WHERE  email='${email}' AND password='${password}'`;
 
-  db.query(query, values[(email, password)], (err, results) => {
-    if (err) {
-      console.error(`Error executing query:`, err);
-      res.status(500).send("An error occured");
-    } else if (results.length === 0) {
-      res.status(404).send("user not found or inavlid credentials");
-      return;
-    }
-    res.json(results[0]);
-  });
-});
+//   db.query(query, values[(email, password)], (err, results) => {
+//     if (err) {
+//       console.error("Error executing query:", err);
+//       res.status(500).send("An error occured");
+//     } else if (results.length === 0) {
+//       res.status(404).send("user not found or inavlid credentials");
+//       return;
+//     }
+//     res.json(results[0]);
+//   });
+// });
 app.post("/blogPost", (req, res) => {
   const { author_name, image_link, title, heading, content } = req.body;
 
@@ -124,18 +134,6 @@ app.post("/blogPost", (req, res) => {
   );
 });
 
-app.get("/getBlog", (req, res) => {
-  const sql = "SELECT * FROM blog_posts";
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error("Error fetching data from blog_posts:", err);
-      res.status(500).send("Error fetching blog posts");
-    } else {
-      console.log("Blog posts fetched successfully:", results);
-      res.status(200).json(results);
-    }
-  });
-});
 app.post("/contact", (req, res) => {
   const { Name, Email, PhoneNumber, Message } = req.body;
   console.log(req.body);
@@ -152,9 +150,9 @@ app.post("/contact", (req, res) => {
   });
 });
 
-app.get(`/getPost/:id`, (req, res) => {
+app.get("/getPost/:id", (req, res) => {
   const id = req.params.id;
-  const sql = `SELECT * FROM blog_posts WHERE id=?`;
+  const sql = "SELECT * FROM blog_posts WHERE id=?";
   db.query(sql, [id], (err, results) => {
     if (err) {
       console.error("Error fetching data from blog_posts:", err);
@@ -165,6 +163,7 @@ app.get(`/getPost/:id`, (req, res) => {
     }
   });
 });
+
 app.delete("/deletePost/:id", (req, res) => {
   const id = req.params.id;
   const sql = "DELETE FROM blog_posts WHERE id=?";
@@ -178,18 +177,145 @@ app.delete("/deletePost/:id", (req, res) => {
     }
   });
 });
-const successMessage = {
-  message: "login success",
-  token: "hello",
-};
-app.post("/name", (req, res) => {
-  const login = req.body;
-  if (login.name && login.password) {
-    res.status(200).send("successfully loginned");
-  } else {
-    res.status(422).send("something is missing  ");
+
+// app.post("/name", async (req, res) => {
+//   db.query(`SELECT * FROM register WHERE email=${db.escape(req.body.email)}`);
+//   (error, results) => {
+//     if (error) {
+//     return  res.status(404).send("error selecting user");
+//     }
+
+//     if (!results.length) {
+//       return res.status(401).send({ msg: "Email or password is incorrect" });
+//     }
+//     bcrypt.compare(req.body.password),
+//       results[0]["password"],
+//       (bError, bResult) => {
+
+//         if (bError) {
+//          res.status(400).send({ msg: "error occured",bError });
+//         }
+//         console.log(bError)
+//         if (bResult) {
+//           const token = jwt.sign({
+//             id: results[0]["id"],
+//             is_admin: results[0]["is_admin"],
+//             JWT_SECRETE,
+//           });
+
+//           return res.status(200).send({
+//             msg: "loggied in",
+//             token,
+//             user: results[0],
+//           });
+//         }
+//         return res.status(401).send("email or password is incorrect");
+//       };
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  const payload = {
+    email: req.body.email,
+    password: req.body.password,
+  };
+  console.log("this is a payload", payload);
+
+  if (!email || !password) {
+    res.status(400).send("email and password are required");
+    return;
   }
+  const sql = "SELECT * FROM register WHERE email=?";
+
+  const values = [email];
+
+  db.query(sql, values, async (error, results) => {
+    if (error) {
+      console.error("Error executing query:", error);
+      res.status(500).send("Error selecting user");
+      return;
+    }
+    try {
+      const match = await bcrypt.compare(password, results[0].password);
+      console.log("match", match);
+      console.log("pass", password);
+      console.log("hashed pass", results[0].password);
+
+      if (!match) {
+        res.status(401).send({ msg: "Email or password is incorrect" });
+        console.log("Email or password is incorrect");
+        return;
+      }
+      const token = jwt.sign(
+        {
+          id: results[0].id,
+          is_admin: results[0].is_admin,
+        },
+        JWT_SECRETE
+      );
+      console.log("this is token", token);
+      // jwt.verify()
+      res.status(200).send({
+        msg: "Logged in",
+        token,
+        user: results[0],
+      });
+    } catch (bError) {
+      res.status(400).send({ msg: "An error occurred", error: bError });
+    }
+  });
+  function verifyAccessToken() {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRETE);
+      console.log("this is decoded", decoded);
+
+      return { success: true, data: decoded };
+    } catch (err) {
+      return { success: false, error: err };
+    }
+  }
+  function authenticationToken(req, res, next) {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split("")[1];
+    if (!token) {
+      return res.sendStatus(401);
+    }
+    const result = verifyAccessToken(token);
+    console.log("this is a result", result);
+    if (!result.success) {
+      return res.status(403).json({ error: result.error });
+    }
+
+    req.data.email = result.data.email;
+
+    next();
+  }
+  // console.log(authenticationToken);
+
+  app.get("/getBlog", authenticationToken, (req, res) => {
+    res.json({
+      message: "Welcome to the protected route",
+      email: req.data.email,
+    });
+    const sql = "SELECT * FROM blog_posts";
+    db.query(sql, (err, results) => {
+      if (err) {
+        console.error("Error fetching data from blog_posts:", err);
+        res.status(500).send("Error fetching blog posts");
+        res.json({
+          message: "Welcome to the protected route",
+          email: req.email,
+        });
+      } else {
+        console.log("Blog posts fetched successfully:", results);
+        res.status(200).json(results);
+      }
+    });
+  });
 });
+// app.get("/getBlog", authenticationToken, (req, res) => {
+//
+// });
+
 module.exports = app;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);

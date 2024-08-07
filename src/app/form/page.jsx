@@ -45,21 +45,18 @@ function Form() {
               {...register("image_link", {})}
             />
             <br />
-
             <label>title:</label>
             <input type="text" placeholder="title" {...register("title", {})} />
-
             <br />
             <label>heading:</label>
-
             <textarea
               type="text"
               placeholder="heading"
               {...register("heading", {})}
             />
+            ``
             <br />
             <label>content:</label>
-
             <textarea
               type="text"
               placeholder="content"

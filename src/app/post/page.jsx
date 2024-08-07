@@ -14,12 +14,15 @@ import {
   faShare,
   faEllipsis,
 } from "@fortawesome/free-solid-svg-icons";
+import Cookie from "js-cookie";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 function Post() {
+  const token = Cookie.get("token");
   const [post, setPost] = useState(null);
   const searchParams = useSearchParams();
-
+  const router = useRouter();
   async function getData(id) {
     try {
       const response = await axios.get(`http://localhost:5000/getPost/${id}`);
@@ -41,7 +44,7 @@ function Post() {
     return <div>Loading...</div>;
   }
 
-  return (
+  return token ? (
     <div>
       <Navbar />
       <div>
@@ -67,13 +70,12 @@ function Post() {
             <div className="flex pl-72 gap-56">
               <div className="flex gap-9">
                 <div className="text-center flex gap-3">
-                  <p className="size-5">
-                    <FontAwesomeIcon icon={faHandsClapping} />
+                  <p className="size-5 flex gap-1 ">
+                    <FontAwesomeIcon icon={faHandsClapping} /> 12k{" "}
                   </p>
-                  {post.likes}
                 </div>
                 <div className="flex gap-3">
-                  <p className="size-5">
+                  <p className="size-5 ">
                     <FontAwesomeIcon icon={faComment} />
                   </p>
                   {post.comments}
@@ -119,6 +121,8 @@ function Post() {
         </div>
       </div>
     </div>
+  ) : (
+    router.push("/login")
   );
 }
 

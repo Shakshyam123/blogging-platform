@@ -6,7 +6,7 @@ const nextConfig = {
       "local host",
       "imgs.search.brave.com",
       "miro.medium.com",
-    ],
+      ],
   },
 };
 

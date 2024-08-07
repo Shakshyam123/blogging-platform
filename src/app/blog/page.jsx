@@ -14,13 +14,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import Cookie from "js-cookie";
 function BlogContent() {
+  const token = Cookie.get("token");
   const router = useRouter();
-
   async function handleDelete(id) {
     try {
       await axios.delete(`http://localhost:5000/deletePost/${id}`);
+
       setData(data.filter((post) => post.id !== id));
     } catch (error) {
       console.error("Error deleting post:", error);
@@ -40,7 +41,12 @@ function BlogContent() {
   useEffect(() => {
     async function getData() {
       try {
-        const response = await axios.get("http://localhost:5000/getBlog");
+        const response = await axios.get("http://localhost:5000/getBlog", {
+          headers: {
+            Authorization: `Bearer${Cookie.get("token")}`,
+          },
+        });
+
         setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -59,7 +65,11 @@ function BlogContent() {
     );
   }
 
-  return (
+  function Logout() {
+    Cookie.remove("token", { path: "" });
+    router.push("/login");
+  }
+  return token ? (
     <div>
       <Navbar />
       <h1 className="m-9 font-extrabold">Because you follow programming</h1>
@@ -90,10 +100,15 @@ function BlogContent() {
                   <div className=" flex gap-3">
                     <FontAwesomeIcon
                       icon={faStar}
-                      style={{ color: "#FFD43B" }}
+                      style={{ color: "#FFD43B", marginTop: "2px" }}
                     />
-                    <FontAwesomeIcon icon={faHandsClapping} className="mr-1" />
-                    {post.likes}4.5k
+                    <div>
+                      <FontAwesomeIcon
+                        icon={faHandsClapping}
+                        className="mr-1"
+                      />
+                      {post.likes}4.5k
+                    </div>
                   </div>
                   <div className="flex items-center">
                     <FontAwesomeIcon icon={faComment} className="mr-1" />
@@ -132,7 +147,15 @@ function BlogContent() {
           <hr className="mt-5" style={{ width: "630px" }} />
         </div>
       ))}
+      <button
+        onClick={Logout}
+        className="bg-white  p-5 boreder-2 border-b-black"
+      >
+        logout
+      </button>
     </div>
+  ) : (
+    router.push("/login")
   );
 }
 

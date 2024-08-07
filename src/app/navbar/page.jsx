@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 function Navbar() {
   return (
@@ -25,15 +26,24 @@ function Navbar() {
           </li>
         </ul>
       </div>
-      <div className="mt-4">
-        <Link href="/login">
-          <span className="mr-5 cursor-pointer text-white">LOG IN</span>
+      <div className="mt-2  flex gap-2">
+        <Link href="/login" className="mt-3">
+          <span className="mr-2 cursor-pointer text-white">LOG IN</span>
         </Link>
         <Link
           href="/register"
-          className="border-2  p-2 rounded-lg bg-transparent text-white hover:text-white hover:bg-gray-700 hover:border-gray-950 "
+          className="border-2  p-2 rounded-lg bg-transparent text-white"
         >
           GET STARTED
+        </Link>
+        <Link href="/profile" className="mb-2">
+          <Image
+            src="/img.jpg"
+            alt="Example Image"
+            width={50}
+            height={50}
+            className="rounded-full mb-3"
+          />
         </Link>
       </div>
     </div>

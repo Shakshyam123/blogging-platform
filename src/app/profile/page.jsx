@@ -10,27 +10,25 @@ export default function Profile() {
   useEffect(() => {
     async function getData() {
       try {
-        const response = await axios.get("http://localhost:5000/hello", {
-          params: { email: "user@example.com" },
-        });
-        setData(response.data); // Set the fetched data to state
+        const response = await axios.get("http://localhost:5000/register", {});
+        setData(response.data);
         console.log(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setLoading(false); // Set loading to false after data is fetched or an error occurs
+        setLoading(false);
       }
     }
     getData();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
-  if (!data) {
-    return <div>Error loading data</div>;
-  }
+  // if (!data) {
+  //   return <div>Error loading data</div>;
+  // }
 
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
@@ -51,7 +49,7 @@ export default function Profile() {
           <div className="md:w-1/3 flex flex-col items-center">
             <div className="text-center">
               <h2 className="text-xl font-semibold">
-                {data.first_name} {data.last_name}
+                {/* {data.first_name} {data.last_name} */}
               </h2>
               <p className="text-gray-600">Web Designer</p>
               <p className="text-sm text-gray-500">
@@ -164,7 +162,8 @@ export default function Profile() {
                   <p className="text-sm text-gray-600">
                     Birthday: Nov 25, 2008
                   </p>
-                  <p className="text-sm text-gray-600">Gender: {data.gender}</p>
+                  <p className="text-sm text-gray-600">Gender: </p>
+                  {/* {data.gender} */}
                 </div>
               </div>
             </div>

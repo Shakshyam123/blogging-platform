@@ -53,12 +53,12 @@ function Register() {
     <div>
       <Navbar />
       <div
-        className="flex border-2 h-fit  shadow-lg justify-center items-center "
-        style={{ backgroundColor: "#282C35" }}
+        className="flex border-2 h-fit  shadow-lg justify-center items-center bg-black border-white"
+        // style={{ backgroundColor: "#282C35" }}
       >
         <div className=" mt-11 rounded-md">
-          <form onSubmit={handleSubmit(onSubmit)} className="w-96 p-5">
-            <h1 className="text-4xl block font-semibold text-center">
+          <form onSubmit={handleSubmit(onSubmit)} className="w-96 p-5 bg-white">
+            <h1 className="text-4xl block font-semibold text-center ">
               Register
             </h1>
 
@@ -66,7 +66,7 @@ function Register() {
               First Name:
             </label>
             <input
-              className="border w-full text-base px-2 py-1 focus:outline-none rounded-lg p-2"
+              className="border w-full text-base px-2 py-1 focus:outline-none = p-2"
               type="text"
               placeholder="First Name"
               {...register("first_name", {
@@ -93,7 +93,7 @@ function Register() {
               Last Name:
             </label>
             <input
-              className="border w-full text-base px-2 py-1 focus:outline-none rounded-lg p-2"
+              className="border w-full text-base px-2 py-1 focus:outline-none  p-2"
               type="text"
               placeholder="Last Name"
               {...register("last_name", {
@@ -120,7 +120,7 @@ function Register() {
               Email:
             </label>
             <input
-              className="border w-full text-base px-2 py-1 focus:outline-none rounded-lg p-2"
+              className="border w-full text-base px-2 py-1 focus:outline-none  p-2"
               type="email"
               placeholder="Email"
               {...register("email", {
@@ -147,7 +147,7 @@ function Register() {
               Password:
             </label>
             <input
-              className="border w-full text-base px-2 py-1 focus:outline-none rounded-lg p-2"
+              className="border w-full text-base px-2 py-1 focus:outline-none p-2"
               type="password"
               placeholder="Password"
               {...register("password", {
@@ -174,7 +174,7 @@ function Register() {
               Birth Date:
             </label>
             <input
-              className="border w-full text-base px-2 py-1 focus:outline-none rounded-lg p-2"
+              className="border w-full text-base px-2 py-1 focus:outline-nonep-2"
               type="datetime-local"
               placeholder="Birth Date"
               {...register("birthdate", {
@@ -218,7 +218,7 @@ function Register() {
               {...register("country", {
                 required: "! Please select a country !",
               })}
-              className="border w-full text-base px-2 py-1 focus:outline-none rounded-lg p-2"
+              className="border w-full text-base px-2 py-1 focus:outline-none p-2"
             >
               <option value="">Select</option>
               <option value="Nepal">Nepal</option>

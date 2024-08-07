@@ -18,6 +18,8 @@ const UpdatePassword = () => {
   const onSubmit = async (data) => {
     if (data.newPassword === data.confirmPassword) {
       await router.push("/login?updated=true");
+
+      alert("updated successfully");
     } else {
       setErrorMessage("Passwords do not match!");
     }
