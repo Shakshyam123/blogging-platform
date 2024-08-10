@@ -7,7 +7,6 @@ const app = express();
 const PORT = 5000;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { message } = require("antd");
 app.use(cors());
 app.use(bodyParser.json());
 const JWT_SECRETE = "this is a serious password";
@@ -92,26 +91,7 @@ app.get("/hello", (req, res) => {
     res.json(results[0]);
   });
 });
-// app.post("/name", (req, res) => {
-//   const { email, password } = req.body;
 
-//   if (!email || !password) {
-//     res.status(400).send("email and password are required");
-//     return;
-//   }
-//   const query = ` SELECT * FROM register WHERE  email='${email}' AND password='${password}'`;
-
-//   db.query(query, values[(email, password)], (err, results) => {
-//     if (err) {
-//       console.error("Error executing query:", err);
-//       res.status(500).send("An error occured");
-//     } else if (results.length === 0) {
-//       res.status(404).send("user not found or inavlid credentials");
-//       return;
-//     }
-//     res.json(results[0]);
-//   });
-// });
 app.post("/blogPost", (req, res) => {
   const { author_name, image_link, title, heading, content } = req.body;
 
@@ -178,41 +158,7 @@ app.delete("/deletePost/:id", (req, res) => {
   });
 });
 
-// app.post("/name", async (req, res) => {
-//   db.query(`SELECT * FROM register WHERE email=${db.escape(req.body.email)}`);
-//   (error, results) => {
-//     if (error) {
-//     return  res.status(404).send("error selecting user");
-//     }
-
-//     if (!results.length) {
-//       return res.status(401).send({ msg: "Email or password is incorrect" });
-//     }
-//     bcrypt.compare(req.body.password),
-//       results[0]["password"],
-//       (bError, bResult) => {
-
-//         if (bError) {
-//          res.status(400).send({ msg: "error occured",bError });
-//         }
-//         console.log(bError)
-//         if (bResult) {
-//           const token = jwt.sign({
-//             id: results[0]["id"],
-//             is_admin: results[0]["is_admin"],
-//             JWT_SECRETE,
-//           });
-
-//           return res.status(200).send({
-//             msg: "loggied in",
-//             token,
-//             user: results[0],
-//           });
-//         }
-//         return res.status(401).send("email or password is incorrect");
-//       };
-
-app.post("/login", async (req, res) => {
+app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const payload = {
     email: req.body.email,
@@ -245,15 +191,16 @@ app.post("/login", async (req, res) => {
         console.log("Email or password is incorrect");
         return;
       }
+      //it generates json webtoken
       const token = jwt.sign(
         {
           id: results[0].id,
+          email: results[0].email,
           is_admin: results[0].is_admin,
         },
         JWT_SECRETE
       );
       console.log("this is token", token);
-      // jwt.verify()
       res.status(200).send({
         msg: "Logged in",
         token,
@@ -263,19 +210,22 @@ app.post("/login", async (req, res) => {
       res.status(400).send({ msg: "An error occurred", error: bError });
     }
   });
-  function verifyAccessToken() {
+  async function verifyAccessToken() {
     try {
-      const decoded = jwt.verify(token, JWT_SECRETE);
+      const decoded = await jwt.verify(token, JWT_SECRETE);
       console.log("this is decoded", decoded);
-
       return { success: true, data: decoded };
     } catch (err) {
       return { success: false, error: err };
     }
   }
-  function authenticationToken(req, res, next) {
-    const authHeader = req.headers["authorization"];
+
+  async function authenticationToken(req, res, next) {
+    const authHeader = await req.headers["authorization"];
+    console.log("header audth", authHeader);
+    console.log("reqheader", req.headers);
     const token = authHeader && authHeader.split("")[1];
+    console.log("secondtoken,", token);
     if (!token) {
       return res.sendStatus(401);
     }
@@ -284,37 +234,27 @@ app.post("/login", async (req, res) => {
     if (!result.success) {
       return res.status(403).json({ error: result.error });
     }
-
     req.data.email = result.data.email;
-
     next();
   }
-  // console.log(authenticationToken);
+});
 
-  app.get("/getBlog", authenticationToken, (req, res) => {
-    res.json({
-      message: "Welcome to the protected route",
-      email: req.data.email,
-    });
-    const sql = "SELECT * FROM blog_posts";
-    db.query(sql, (err, results) => {
-      if (err) {
-        console.error("Error fetching data from blog_posts:", err);
-        res.status(500).send("Error fetching blog posts");
-        res.json({
-          message: "Welcome to the protected route",
-          email: req.email,
-        });
-      } else {
-        console.log("Blog posts fetched successfully:", results);
-        res.status(200).json(results);
-      }
-    });
+app.get("/getBlog", (req, res) => {
+  const sql = "SELECT * FROM blog_posts";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching data from blog_posts:", err);
+      res.status(500).send("Error fetching blog posts");
+      // res.json({
+      //   message: "Welcome to the protected routes",
+      //   email: req.email,
+      // });
+    } else {
+      console.log("Blog posts fetched successfully:", results);
+      res.status(200).json(results);
+    }
   });
 });
-// app.get("/getBlog", authenticationToken, (req, res) => {
-//
-// });
 
 module.exports = app;
 app.listen(PORT, () => {

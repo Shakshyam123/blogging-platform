@@ -27,6 +27,7 @@ export default function Profile() {
   // }
 
   // if (!data) {
+
   //   return <div>Error loading data</div>;
   // }
 

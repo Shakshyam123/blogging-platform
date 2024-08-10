@@ -15,13 +15,36 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Cookie from "js-cookie";
+
 function BlogContent() {
   const token = Cookie.get("token");
   const router = useRouter();
+  const [data, setData] = useState([]);
+
+  async function getData() {
+    try {
+      const response = await axios.get("http://localhost:5000/getBlog", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setData(response.data);
+      console.log("this is a response", response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+  useEffect(() => {
+    getData();
+  }, []);
+
   async function handleDelete(id) {
     try {
-      await axios.delete(`http://localhost:5000/deletePost/${id}`);
-
+      await axios.delete(`http://localhost:5000/deletePost/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setData(data.filter((post) => post.id !== id));
     } catch (error) {
       console.error("Error deleting post:", error);
@@ -36,25 +59,11 @@ function BlogContent() {
     }
   };
 
-  const [data, setData] = useState([]);
+  const Logout = () => {
+    Cookie.remove("token", { path: "" });
+    router.push("/login");
+  };
 
-  useEffect(() => {
-    async function getData() {
-      try {
-        const response = await axios.get("http://localhost:5000/getBlog", {
-          headers: {
-            Authorization: `Bearer${Cookie.get("token")}`,
-          },
-        });
-
-        setData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
-
-    getData();
-  }, []);
   if (!data.length) {
     return (
       <div>
@@ -65,10 +74,6 @@ function BlogContent() {
     );
   }
 
-  function Logout() {
-    Cookie.remove("token", { path: "" });
-    router.push("/login");
-  }
   return token ? (
     <div>
       <Navbar />
@@ -97,7 +102,7 @@ function BlogContent() {
               <div className="text-gray-500 mb-5 w-96">{post.heading}</div>
               <div className="flex text-gray-600 text-sm gap-52">
                 <div className="flex gap-4">
-                  <div className=" flex gap-3">
+                  <div className="flex gap-3">
                     <FontAwesomeIcon
                       icon={faStar}
                       style={{ color: "#FFD43B", marginTop: "2px" }}
@@ -107,12 +112,12 @@ function BlogContent() {
                         icon={faHandsClapping}
                         className="mr-1"
                       />
-                      {post.likes}4.5k
+                      {post.likes}
                     </div>
                   </div>
                   <div className="flex items-center">
                     <FontAwesomeIcon icon={faComment} className="mr-1" />
-                    {post.comments} 99
+                    {post.comments}
                   </div>
                 </div>
                 <div className="flex gap-5">
@@ -122,11 +127,7 @@ function BlogContent() {
                       handleDelete(post.id);
                     }}
                   >
-                    <FontAwesomeIcon
-                      icon={faCircleMinus}
-                      className="text-lg  "
-                      style={{ handleDelete }}
-                    />
+                    <FontAwesomeIcon icon={faCircleMinus} className="text-lg" />
                   </button>
                   <FontAwesomeIcon icon={faBookmark} className="" />
                   <FontAwesomeIcon icon={faEllipsis} className="text-lg" />
@@ -147,11 +148,8 @@ function BlogContent() {
           <hr className="mt-5" style={{ width: "630px" }} />
         </div>
       ))}
-      <button
-        onClick={Logout}
-        className="bg-white  p-5 boreder-2 border-b-black"
-      >
-        logout
+      <button onClick={Logout} className="bg-white p-5 border-2 border-black">
+        Logout
       </button>
     </div>
   ) : (
