@@ -207,7 +207,6 @@ app.post("/login", (req, res) => {
   });
 });
 
-// Middleware to verify token
 async function verifyAccessToken(token) {
   try {
     const decoded = await jwt.verify(token, JWT_SECRETE);
@@ -217,7 +216,6 @@ async function verifyAccessToken(token) {
   }
 }
 
-// Middleware to authenticate token
 async function authenticationToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -236,23 +234,21 @@ async function authenticationToken(req, res, next) {
   next();
 }
 
-// app.get("/getProfile", authenticationToken, (req, res) => {
-//   const userEmail = req.user.email;
+app.get("/getProfile", authenticationToken, (req, res) => {
+  const userEmail = req.user.email;
 
-//   const SQL =
-//     "SELECT first_name, last_name, birthdate, gender, country FROM register WHERE email=?";
-//   db.query(SQL, [userEmail], (err, results) => {
-//     if (err) {
-//       return res.status(500).json({ msg: "Error fetching profile data", err });
-//     }
-
-//     if (results.length === 0) {
-//       return res.status(404).json({ msg: "User not found" });
-//     }
-
-//     return res.status(200).json(results[0]);
-//   });
-// });
+  const SQL =
+    "SELECT first_name, last_name, birthdate, gender,email, country FROM register WHERE email=?";
+  db.query(SQL, [userEmail], (err, results) => {
+    if (err) {
+      return res.status(500).json({ msg: "Error fetching profile data", err });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    return res.status(200).json(results);
+  });
+});
 
 app.get("/getBlog", authenticationToken, (req, res) => {
   const sql = "SELECT * FROM blog_posts";
@@ -263,24 +259,22 @@ app.get("/getBlog", authenticationToken, (req, res) => {
     return res.status(200).json(results);
   });
 });
-app.get("/getProfile", (req, res) => {
-  const email = "boharashakshyam@gmail.com";
-  const response = req.body;
-  console.log("requesting body", response);
-  const SQL =
-    "SELECT first_name, last_name, birthdate, gender, country FROM register WHERE email=?";
-  db.query(SQL, [email], (err, results) => {
-    if (err) {
-      console.log("error data fetching from register", err);
-      res.status(500).json("Error fetching blog posts", err);
-    }
-    if (results.length === 0) {
-      res.status(404).json("email or password is incorrect");
-    }
-    console.log(results);
-    res.status(200).json(results);
-  });
-});
+// app.get("/getProfile", (req, res) => {
+//   const email = "boharashakshyam@gmail.com";
+//   const SQL =
+//     "SELECT first_name, last_name, birthdate, gender, country FROM register WHERE email=?";
+//   db.query(SQL, [email], (err, results) => {
+//     if (err) {
+//       console.log("error data fetching from register", err);
+//       res.status(500).json("Error fetching blog posts", err);
+//     }
+//     if (results.length === 0) {
+//       res.status(404).json("email or password is incorrect");
+//     }
+//     console.log(results);
+//     res.status(200).json(results);
+//   });
+// });
 
 module.exports = app;
 app.listen(PORT, () => {

@@ -21,8 +21,20 @@ function BlogContent() {
   const token = Cookie.get("token");
   const router = useRouter();
   const [data, setData] = useState([]);
+  const [isClient, setIsClient] = useState(false);
   const login = useStore((state) => state.login);
   const logout = useStore((state) => state.logout);
+
+  useEffect(() => {
+    setIsClient(true);
+
+    if (!token) {
+      router.push("/login");
+    } else {
+      getData();
+      login();
+    }
+  }, [token]);
 
   async function getData() {
     try {
@@ -58,22 +70,13 @@ function BlogContent() {
     }
   };
 
-  useEffect(() => {
-    if (!token) {
-      router.push("/login");
-    } else {
-      getData();
-      login();
-    }
-  }, [token]);
-
   const Logout = () => {
     Cookie.remove("token", { path: "" });
     logout();
     router.push("/login");
   };
-
-  if (!token) {
+  // If token is missing or we are not on the client side yet, don't render the content
+  if (!token || !isClient) {
     return null;
   }
 
@@ -99,16 +102,11 @@ function BlogContent() {
       </h1>
       <hr className="mb-10" />
       <div className="flex">
-        <div
-        // style={{
-        //   width: "70%",
-        //   background: "linear-gradient(to right, #faeead, #fbf0b8, #ffffff)",
-        // }}
-        >
+        <div>
           {data.map((post, index) => (
             <div key={index}>
               <div
-                className="ml-20 mr-14 mt-5 cursor-pointer "
+                className="ml-20 mr-14 mt-5 cursor-pointer"
                 onClick={() => handleClick(post.id)}
               >
                 <div className="flex gap-24">
@@ -120,6 +118,7 @@ function BlogContent() {
                         width={20}
                         height={20}
                         className="rounded-full mb-4 h-5 w-5"
+                        referrerPolicy="no-referrer"
                       />
                       <div className="text-sm mb-4">{post.author_name}</div>
                     </div>
@@ -127,7 +126,7 @@ function BlogContent() {
                       {post.title}
                     </div>
                     <div className="text-gray-600 mb-5 w-96">
-                      {post.heading}{" "}
+                      {post.heading}
                     </div>
                   </div>
                   <div className="ml-7">
@@ -137,6 +136,7 @@ function BlogContent() {
                       width={500}
                       height={500}
                       className="h-32 w-40 mb-8"
+                      referrerPolicy="no-referrer"
                     />
                   </div>
                 </div>
