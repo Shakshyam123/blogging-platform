@@ -1,8 +1,12 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import useStore from "../../store/useStore.js";
 
 function Navbar() {
+  const { login, logout, isAuthenticated } = useStore();
   return (
     <div className="flex justify-between text-center bg-black h-20 p-3">
       <div className="mt-3">
@@ -26,25 +30,61 @@ function Navbar() {
           </li>
         </ul>
       </div>
+
       <div className="mt-2  flex gap-2">
-        <Link href="/login" className="mt-3">
-          <span className="mr-2 cursor-pointer text-white">LOG IN</span>
-        </Link>
-        <Link
-          href="/register"
-          className="border-2  p-2 rounded-lg bg-transparent text-white"
-        >
-          GET STARTED
-        </Link>
-        <Link href="/profile" className="mb-2">
-          <Image
-            src="/img.jpg"
-            alt="Example Image"
-            width={50}
-            height={50}
-            className="rounded-full mb-3"
-          />
-        </Link>
+        {!isAuthenticated ? (
+          <>
+            {logout ? (
+              <>
+                <Link href="/login" className="mt-3">
+                  <span className="mr-2 cursor-pointer text-white">LOG IN</span>
+                </Link>
+                <Link
+                  href="/register"
+                  className="border-2  p-2 rounded-lg bg-transparent text-white"
+                >
+                  GET STARTED
+                </Link>
+              </>
+            ) : (
+              <Link href="/profile" className="mb-2">
+                <Image
+                  src="/img.jpg"
+                  alt="Example Image"
+                  width={50}
+                  height={50}
+                  className="rounded-full mb-3 "
+                />
+              </Link>
+            )}
+          </>
+        ) : (
+          <>
+            {login ? (
+              <Link href="/profile" className="mb-2">
+                <Image
+                  src="/img.jpg"
+                  alt="Example Image"
+                  width={50}
+                  height={50}
+                  className="rounded-full mb-3 mr-7"
+                />
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="mt-3">
+                  <span className="mr-2 cursor-pointer text-white">LOG IN</span>
+                </Link>
+                <Link
+                  href="/register"
+                  className="border-2  p-2 rounded-lg bg-transparent text-white"
+                >
+                  GET STARTED
+                </Link>
+              </>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

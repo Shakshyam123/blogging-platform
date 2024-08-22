@@ -1,12 +1,10 @@
 "use client";
-import Link from "next/Link";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
-// import Navbar from "../navbar/page";
+import Link from "next/link";
 import Cookie from "js-cookie";
-
 function LoginForm() {
   const cookie = Cookie.get("token");
   const {
@@ -27,7 +25,6 @@ function LoginForm() {
       });
       Cookie.set("token", response.data.token, { path: "" });
       console.log(response.data);
-      // router.push("/home");
     } catch (error) {
       setError(error.response?.data?.message || error.message);
       setTimeout(() => {

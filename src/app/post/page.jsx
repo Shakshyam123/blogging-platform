@@ -70,27 +70,27 @@ function Post() {
             <div className="flex pl-72 gap-56">
               <div className="flex gap-9">
                 <div className="text-center flex gap-3">
-                  <p className="size-5 flex gap-1 ">
+                  <button className="size-5 flex gap-1 ">
                     <FontAwesomeIcon icon={faHandsClapping} /> 12k{" "}
-                  </p>
+                  </button>
                 </div>
                 <div className="flex gap-3">
-                  <p className="size-5 ">
+                  <button className="size-5 ">
                     <FontAwesomeIcon icon={faComment} />
-                  </p>
-                  {post.comments}
+                  </button>
+                  {post.comments}9
                 </div>
               </div>
               <div className="flex gap-8">
-                <p className="size-4">
+                <button className="size-4">
                   <FontAwesomeIcon icon={faBookmark} />
-                </p>
-                <p className="size-5">
+                </button>
+                <button className="size-5">
                   <FontAwesomeIcon icon={faCirclePlay} />
-                </p>
-                <p className="size-5">
+                </button>
+                <button className="size-5">
                   <FontAwesomeIcon icon={faShare} />
-                </p>
+                </button>
                 <p className="size-5">
                   <div className="relative">
                     <button className="relative">

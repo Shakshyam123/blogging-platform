@@ -74,7 +74,7 @@ app.post("/nepal", (req, res) => {
     });
   });
 });
-app.get("/hello", (req, res) => {
+app.get("/register", (req, res) => {
   const email = "boharashakshyam@gmail.com";
   const sql =
     "SELECT first_name, last_name, email, password, birthdate, gender, country FROM register WHERE email=?";
@@ -87,7 +87,7 @@ app.get("/hello", (req, res) => {
     if (results.length === 0) {
       return res.status(404).json({ error: "No users found" });
     }
-    console.log(results[0]);
+    console.log("this is a result", results[0]);
     res.json(results[0]);
   });
 });
@@ -160,99 +160,125 @@ app.delete("/deletePost/:id", (req, res) => {
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  const payload = {
-    email: req.body.email,
-    password: req.body.password,
-  };
-  console.log("this is a payload", payload);
 
   if (!email || !password) {
-    res.status(400).send("email and password are required");
-    return;
+    return res.status(400).send("Email and password are required");
   }
-  const sql = "SELECT * FROM register WHERE email=?";
 
+  const sql = "SELECT * FROM register WHERE email=?";
   const values = [email];
 
   db.query(sql, values, async (error, results) => {
     if (error) {
       console.error("Error executing query:", error);
-      res.status(500).send("Error selecting user");
-      return;
+      return res.status(500).send("Error selecting user");
     }
+
+    if (results.length === 0) {
+      return res.status(401).send({ msg: "Email or password is incorrect" });
+    }
+
     try {
       const match = await bcrypt.compare(password, results[0].password);
-      console.log("match", match);
-      console.log("pass", password);
-      console.log("hashed pass", results[0].password);
 
       if (!match) {
-        res.status(401).send({ msg: "Email or password is incorrect" });
-        console.log("Email or password is incorrect");
-        return;
+        return res.status(401).send({ msg: "Email or password is incorrect" });
       }
-      //it generates json webtoken
+
+      // Generate JWT
       const token = jwt.sign(
         {
           id: results[0].id,
           email: results[0].email,
           is_admin: results[0].is_admin,
         },
-        JWT_SECRETE
+        JWT_SECRETE,
+        { expiresIn: "1h" } // optional: set token expiration
       );
-      console.log("this is token", token);
-      res.status(200).send({
+
+      return res.status(200).send({
         msg: "Logged in",
         token,
         user: results[0],
       });
     } catch (bError) {
-      res.status(400).send({ msg: "An error occurred", error: bError });
+      return res.status(400).send({ msg: "An error occurred", error: bError });
     }
   });
-  async function verifyAccessToken() {
-    try {
-      const decoded = await jwt.verify(token, JWT_SECRETE);
-      console.log("this is decoded", decoded);
-      return { success: true, data: decoded };
-    } catch (err) {
-      return { success: false, error: err };
-    }
-  }
-
-  async function authenticationToken(req, res, next) {
-    const authHeader = await req.headers["authorization"];
-    console.log("header audth", authHeader);
-    console.log("reqheader", req.headers);
-    const token = authHeader && authHeader.split("")[1];
-    console.log("secondtoken,", token);
-    if (!token) {
-      return res.sendStatus(401);
-    }
-    const result = verifyAccessToken(token);
-    console.log("this is a result", result);
-    if (!result.success) {
-      return res.status(403).json({ error: result.error });
-    }
-    req.data.email = result.data.email;
-    next();
-  }
 });
 
-app.get("/getBlog", (req, res) => {
+// Middleware to verify token
+async function verifyAccessToken(token) {
+  try {
+    const decoded = await jwt.verify(token, JWT_SECRETE);
+    return { success: true, data: decoded };
+  } catch (err) {
+    return { success: false, error: err };
+  }
+}
+
+// Middleware to authenticate token
+async function authenticationToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.sendStatus(401);
+  }
+
+  const result = await verifyAccessToken(token);
+
+  if (!result.success) {
+    return res.status(403).json({ error: result.error });
+  }
+
+  req.user = result.data;
+  next();
+}
+
+// app.get("/getProfile", authenticationToken, (req, res) => {
+//   const userEmail = req.user.email;
+
+//   const SQL =
+//     "SELECT first_name, last_name, birthdate, gender, country FROM register WHERE email=?";
+//   db.query(SQL, [userEmail], (err, results) => {
+//     if (err) {
+//       return res.status(500).json({ msg: "Error fetching profile data", err });
+//     }
+
+//     if (results.length === 0) {
+//       return res.status(404).json({ msg: "User not found" });
+//     }
+
+//     return res.status(200).json(results[0]);
+//   });
+// });
+
+app.get("/getBlog", authenticationToken, (req, res) => {
   const sql = "SELECT * FROM blog_posts";
   db.query(sql, (err, results) => {
     if (err) {
-      console.error("Error fetching data from blog_posts:", err);
-      res.status(500).send("Error fetching blog posts");
-      // res.json({
-      //   message: "Welcome to the protected routes",
-      //   email: req.email,
-      // });
-    } else {
-      console.log("Blog posts fetched successfully:", results);
-      res.status(200).json(results);
+      return res.status(500).send("Error fetching blog posts");
     }
+    return res.status(200).json(results);
+  });
+});
+app.get("/getProfile", (req, res) => {
+  const email = "boharashakshyam@gmail.com";
+  const response = req.body;
+  console.log("requesting body", response);
+  const SQL =
+    "SELECT first_name, last_name, birthdate, gender, country FROM register WHERE email=?";
+  db.query(SQL, [email], (err, results) => {
+    if (err) {
+      console.log("error data fetching from register", err);
+      res.status(500).json("Error fetching blog posts", err);
+    }
+    if (results.length === 0) {
+      res.status(404).json("email or password is incorrect");
+    }
+    console.log(results);
+    res.status(200).json(results);
   });
 });
 

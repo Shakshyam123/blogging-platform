@@ -2,34 +2,41 @@
 import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import Cookie from "js-cookie";
 
 export default function Profile() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function getData() {
-      try {
-        const response = await axios.get("http://localhost:5000/register", {});
-        setData(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
+  async function getData() {
+    const token = Cookie.get("token");
+    try {
+      const response = await axios.get("http://localhost:5000/getProfile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setData(response.data);
+      console.log("this is a response", response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
+  }
+
+  useEffect(() => {
     getData();
   }, []);
 
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  // if (!data) {
-
-  //   return <div>Error loading data</div>;
-  // }
+  if (!data) {
+    return <div>No data available</div>;
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
@@ -37,7 +44,7 @@ export default function Profile() {
         <div className="flex items-center justify-between border-b pb-4 mb-4">
           <div className="flex items-center space-x-4">
             <Image
-              src="/img.jpg"
+              src="/image3.jpg"
               alt="Example Image"
               width={500}
               height={500}
@@ -50,20 +57,24 @@ export default function Profile() {
           <div className="md:w-1/3 flex flex-col items-center">
             <div className="text-center">
               <h2 className="text-xl font-semibold">
-                {/* {data.first_name} {data.last_name} */}
+                {data.first_name} {data.last_name}
               </h2>
               <p className="text-gray-600">Web Designer</p>
               <p className="text-sm text-gray-500">
-                <i className="fas fa-map-marker-alt"></i> Nepal, NP
+                <i className="fas fa-map-marker-alt"></i>
+                {data.country}
               </p>
             </div>
             <div className="flex justify-center space-x-4 mt-4">
               <button className="bg-blue-500 text-white px-4 py-2 rounded">
                 Send Message
               </button>
-              <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded">
+              <Link
+                className="bg-gray-200 text-gray-800 px-4 py-2 rounded"
+                href="/contact"
+              >
                 Contacts
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -150,21 +161,17 @@ export default function Profile() {
                   </p>
                   <p className="text-sm text-gray-600">
                     E-mail:{" "}
-                    <a
-                      href="mailto:boharashakshyam@gmail.com"
-                      className="text-blue-500"
-                    >
-                      boharashakshyam@gmail.com
+                    <a href={`mailto:${data.email}`} className="text-blue-500">
+                      {data.email}
                     </a>
                   </p>
                 </div>
                 <div>
                   <h4 className="font-bold">Basic Information</h4>
                   <p className="text-sm text-gray-600">
-                    Birthday: Nov 25, 2008
+                    Birthday: {data.birthdate}
                   </p>
-                  <p className="text-sm text-gray-600">Gender: </p>
-                  {/* {data.gender} */}
+                  <p className="text-sm text-gray-600">Gender: {data.gender}</p>
                 </div>
               </div>
             </div>

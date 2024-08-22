@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Navbar from "../navbar/page";
-import axios from "axios";
+import axios from "axios";  
 import Footer from "../footer/page";
 import { ErrorRounded } from "@mui/icons-material";
 

@@ -58,7 +58,7 @@ function Register() {
       >
         <div className=" mt-11 rounded-md">
           <form onSubmit={handleSubmit(onSubmit)} className="w-96 p-5 bg-white">
-            <h1 className="text-4xl block font-semibold text-center ">
+            <h1 className="text-4xl block font-semibold text-center">
               Register
             </h1>
 
