@@ -14,16 +14,24 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Cookie from "js-cookie";
+import Modal from "../blog/openModal/page";
+import HoverModel from "./hoverMOdel/page";
 import useStore from "@/store/useStore";
+import { Trykker } from "next/font/google";
 
 function BlogContent() {
   const token = Cookie.get("token");
   const router = useRouter();
   const [data, setData] = useState([]);
+  const [data2, setData2] = useState([]);
   const [isClient, setIsClient] = useState(false);
   const login = useStore((state) => state.login);
   const logout = useStore((state) => state.logout);
+
+  const [open, setOpen] = useState(false);
+  const [onHoverModel, setOnHoverModel] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -48,19 +56,29 @@ function BlogContent() {
       console.error("Error fetching data:", error);
     }
   }
-
-  const handleDelete = async (id) => {
+  async function getNewData() {
     try {
-      await axios.delete(`http://localhost:5000/deletePost/${id}`, {
+      const res = await axios.get("http://localhost:5000/reccomendation", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setData(data.filter((post) => post.id !== id));
-    } catch (error) {
-      console.error("Error deleting post:", error);
+    } catch (err) {
+      console.log(err);
     }
-  };
+  }
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await axios.delete(`http://localhost:5000/deletePost/${id}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  //     setData(data.filter((post) => post.id !== id));
+  //   } catch (error) {
+  //     console.error("Error deleting post:", error);
+  //   }
+  // };
 
   const handleClick = async (id) => {
     if (id) {
@@ -75,7 +93,6 @@ function BlogContent() {
     logout();
     router.push("/login");
   };
-  // If token is missing or we are not on the client side yet, don't render the content
   if (!token || !isClient) {
     return null;
   }
@@ -111,15 +128,34 @@ function BlogContent() {
               >
                 <div className="flex gap-24">
                   <div>
-                    <div className="flex items-center gap-2 relative mb-1">
-                      <Image
-                        src={post.image_link}
-                        alt="Example Image"
-                        width={20}
-                        height={20}
-                        className="rounded-full mb-4 h-5 w-5"
-                        referrerPolicy="no-referrer"
-                      />
+                    <div className="flex gap-2 mb-1">
+                      <div
+                        className="cursor-pointer gap-64"
+                        onMouseEnter={() => {
+                          setOnHoverModel(post.id);
+                        }}
+                        onMouseLeave={() => setOnHoverModel(null)}
+                      >
+                        <Image
+                          src={post.image_link}
+                          alt="Example Image"
+                          width={20}
+                          height={20}
+                          className="rounded-full mb-4 h-5 w-5 "
+                        />
+                      </div>
+                      <div className="">
+                        {onHoverModel === post.id && (
+                          <HoverModel
+                            onMouseEnter={() => {
+                              onHoverModel(true);
+                            }}
+                            onMouseLeave={() => {
+                              setOnHoverModel(null);
+                            }}
+                          ></HoverModel>
+                        )}
+                      </div>
                       <div className="text-sm mb-4">{post.author_name}</div>
                     </div>
                     <div className="font-extrabold text-2xl mb-3 w-96">
@@ -136,17 +172,16 @@ function BlogContent() {
                       width={500}
                       height={500}
                       className="h-32 w-40 mb-8"
-                      referrerPolicy="no-referrer"
                     />
                   </div>
                 </div>
               </div>
-              <div className="flex text-gray-500 text-sm gap-64 ml-20">
+              <div className="flex text-gray-500 text-sm gap-36 ml-20">
                 <div className="flex gap-4">
                   <div className="flex gap-3">
                     <FontAwesomeIcon
                       icon={faStar}
-                      style={{ color: "#FFD43B", marginTop: "2px" }}
+                      style={{ color: "#FFD43B" }}
                     />
                     Mar 20
                     <div>
@@ -158,35 +193,75 @@ function BlogContent() {
                       {post.likes}
                     </div>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex mt-0.5">
                     <FontAwesomeIcon icon={faComment} className="mr-1" />
                     23
-                    {post.comments}
+                    {/* {post.comments} */}
                   </div>
                 </div>
                 <div className="flex gap-5">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(post.id);
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faCircleMinus} className="text-lg" />
-                  </button>
-                  <button>
-                    <FontAwesomeIcon icon={faBookmark} className="text-lg" />
-                  </button>
-                  <button>
-                    <FontAwesomeIcon icon={faEllipsis} className="text-lg" />
-                  </button>
+                  <div className="relative ">
+                    <button>
+                      <FontAwesomeIcon icon={faBookmark} className="text-lg" />
+                    </button>
+                    &nbsp; &nbsp; &nbsp;
+                    <button
+                      onClick={() => {
+                        setOpen(post.id);
+                      }}
+                      className=""
+                    >
+                      {" "}
+                      <FontAwesomeIcon icon={faEllipsis} className="text-lg" />
+                    </button>
+                  </div>
+                  {open === post.id && (
+                    <div className="absolute top-auto">
+                      <Modal
+                        className=""
+                        open={open === post.id}
+                        onClose={() => {
+                          setOpen(false);
+                        }}
+                      ></Modal>
+                    </div>
+                  )}
                 </div>
               </div>
-              <hr className="mt-5 ml-20" style={{ width: "630px" }} />
+
+              <hr className=" ml-20 mt-5" style={{ width: "630px" }} />
             </div>
           ))}
         </div>
-        <div>this is a second content</div>
+        <div className="ml-20 ">
+          <div>
+            <h1 className="font-bold mb-9">Recommendation</h1>
+          </div>
+          {data.map((post) => (
+            <>
+              <div
+                className="w-80 mb-8  cursor-pointer"
+                onClick={() => handleClick(post.id)}
+              >
+                <div className="flex gap-4 ">
+                  <Image
+                    src={post.image_link}
+                    alt="Example Image"
+                    width={20}
+                    height={20}
+                    className="rounded-full mb-4 h-5 w-5"
+                    referrerPolicy="no-referrer"
+                  />
+                  <h1 className="text-xm ">{post.author_name}</h1>
+                </div>
+                <div className="font-bold">{post.heading}</div>
+              </div>
+            </>
+          ))}
+        </div>
+        {/* <Link href="/home">See more suggestions</Link> */}
       </div>
+
       <button onClick={Logout} className="mt-10">
         Logout
       </button>

@@ -238,7 +238,7 @@ app.get("/getProfile", authenticationToken, (req, res) => {
   const userEmail = req.user.email;
 
   const SQL =
-    "SELECT first_name, last_name, birthdate, gender,email, country FROM register WHERE email=?";
+    "SELECT first_name, last_name, birthdate, gender, email, country FROM register WHERE email=?";
   db.query(SQL, [userEmail], (err, results) => {
     if (err) {
       return res.status(500).json({ msg: "Error fetching profile data", err });
@@ -246,11 +246,21 @@ app.get("/getProfile", authenticationToken, (req, res) => {
     if (results.length === 0) {
       return res.status(404).json({ msg: "User not found" });
     }
-    return res.status(200).json(results);
+    console.log("this is a reesult", results);
+    return res.status(200).json(results[0]);
   });
 });
 
 app.get("/getBlog", authenticationToken, (req, res) => {
+  const sql = "SELECT * FROM blog_posts";
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).send("Error fetching blog posts");
+    }
+    return res.status(200).json(results);
+  });
+});
+app.get("/reccomendation", authenticationToken, (req, res) => {
   const sql = "SELECT * FROM blog_posts";
   db.query(sql, (err, results) => {
     if (err) {
