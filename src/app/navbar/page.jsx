@@ -49,7 +49,7 @@ function Navbar() {
             ) : (
               <Link href="/profile" className="mb-2">
                 <Image
-                  src="/img.jpg"
+                  src="/image3.jpg"
                   alt="Example Image"
                   width={50}
                   height={50}
@@ -63,7 +63,7 @@ function Navbar() {
             {login ? (
               <Link href="/profile" className="mb-2">
                 <Image
-                  src="/img.jpg"
+                  src="/image3.jpg"
                   alt="Example Image"
                   width={50}
                   height={50}

@@ -200,7 +200,7 @@ function BlogContent() {
                   </div>
                 </div>
                 <div className="flex gap-5">
-                  <div className="relative ">
+                  <div className=" ">
                     <button>
                       <FontAwesomeIcon icon={faBookmark} className="text-lg" />
                     </button>
@@ -234,30 +234,32 @@ function BlogContent() {
           ))}
         </div>
         <div className="ml-20 ">
-          <div>
+          <div className="">
             <h1 className="font-bold mb-9">Recommendation</h1>
           </div>
-          {data.map((post) => (
-            <>
-              <div
-                className="w-80 mb-8  cursor-pointer"
-                onClick={() => handleClick(post.id)}
-              >
-                <div className="flex gap-4 ">
-                  <Image
-                    src={post.image_link}
-                    alt="Example Image"
-                    width={20}
-                    height={20}
-                    className="rounded-full mb-4 h-5 w-5"
-                    referrerPolicy="no-referrer"
-                  />
-                  <h1 className="text-xm ">{post.author_name}</h1>
+          <div className="overflow-auto h-64">
+            {data.map((post) => (
+              <>
+                <div
+                  className="w-80 mb-8  cursor-pointer"
+                  onClick={() => handleClick(post.id)}
+                >
+                  <div className="flex gap-4 ">
+                    <Image
+                      src={post.image_link}
+                      alt="Example Image"
+                      width={20}
+                      height={20}
+                      className="rounded-full mb-4 h-5 w-5"
+                      referrerPolicy="no-referrer"
+                    />
+                    <h1 className="text-xm ">{post.author_name}</h1>
+                  </div>
+                  <div className="font-bold">{post.heading}</div>
                 </div>
-                <div className="font-bold">{post.heading}</div>
-              </div>
-            </>
-          ))}
+              </>
+            ))}
+          </div>
         </div>
         {/* <Link href="/home">See more suggestions</Link> */}
       </div>

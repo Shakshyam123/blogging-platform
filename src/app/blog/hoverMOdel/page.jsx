@@ -7,10 +7,11 @@ import Image from "next/image";
 function HoverModel() {
   const [data, setData] = useState([]);
   console.log("this is a data", data);
+
   async function getUserData() {
     try {
       const token = Cookie.get("token");
-      const response = await axios.get("http://localhost:5000/getBlog", {
+      const response = await axios.get("http://localhost:5000/hoverModel", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -27,15 +28,15 @@ function HoverModel() {
   }, []);
 
   return (
-    <div className="border-2 h-auto p-5 absolute bg-white shadow rounded-lg z-auto top-auto left-24">
-      <div className=" flex gap-36">
+    <div className="border-2  h-auto p-5 absolute bg-white shadow rounded-lg z-auto top-auto left-24">
+      <div className=" flex gap-32">
         <div className="">
           <Image
-            src={"/img.jpg"}
+            src={data.image_link || "/img.jpg"}
             alt="Example Image"
             width={60}
             height={60}
-            className="rounded-full"
+            className="rounded-full h-24 w-24"
             referrerPolicy="no-referrer"
           />
         </div>
@@ -48,7 +49,7 @@ function HoverModel() {
           <h2 className="font-bold">{data.author_name}</h2>
         </div>
         <div>
-          <p className="font-bold mt-2">6.9k followers</p>
+          <p className="font-bold mt-1 text-gray-400">6.9k followers</p>
         </div>
         <div>
           <p className="w-72 mt-2 text-sm">{data.heading}</p>

@@ -258,8 +258,18 @@ app.get("/getBlog", authenticationToken, (req, res) => {
       return res.status(500).send("Error fetching blog posts");
     }
     return res.status(200).json(results);
+  });   
+});
+app.get("/hoverModel", authenticationToken, (req, res) => {
+  const sql = "SELECT author_name,image_link,heading FROM blog_posts";
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).send("Error fetching blog posts");
+    }
+    return res.status(200).send(results[4]);
   });
 });
+
 app.get("/reccomendation", authenticationToken, (req, res) => {
   const sql = "SELECT * FROM blog_posts";
   db.query(sql, (err, results) => {

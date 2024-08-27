@@ -1,13 +1,14 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus, faCircleMinus } from "@fortawesome/free-solid-svg-icons";
+import { colors } from "@mui/material";
 
 function Modal({ open, onClose, childern }) {
   if (!open) {
     return null;
   }
   return (
-    <div>
+    <div className="w-64">
       <div
         onClick={onClose}
         className={`relative transition-colors${
@@ -31,7 +32,10 @@ function Modal({ open, onClose, childern }) {
           <div className="m-3">
             <div className="gap-3">
               <button>
-                <FontAwesomeIcon icon={faCirclePlus} />
+                <FontAwesomeIcon
+                  icon={faCirclePlus}
+                  style={{ backgroundColor: "white" }}
+                />
               </button>
               &nbsp; Show more
             </div>
@@ -47,6 +51,23 @@ function Modal({ open, onClose, childern }) {
             Recommed less stories Likes this to me
           </div>
           {childern}
+          <hr className="mb-2 w-full" />
+          <div className="ml-3 m-4">
+            <h1 className="mb-2 hover:text-black cursor-pointer">
+              Unfollow author
+            </h1>
+            <h1 className=" hover:text-black coursor-pointer">Follow author</h1>
+          </div>
+          <hr />
+          <div className=" m-4">
+            <h1 className="mb-2  hover:text-black coursor-pointer">
+              Mute autor
+            </h1>
+            <h1 className="mb-2  hover:text-black coursor-pointer">
+              Mute Publication
+            </h1>
+            <h1 className="text-red-600  cursor-pointer">Report story...</h1>
+          </div>
         </div>
       </div>
     </div>
