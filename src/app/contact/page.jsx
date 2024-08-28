@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Navbar from "../navbar/page";
-import axios from "axios";  
+import axios from "axios";
 import Footer from "../footer/page";
 import { ErrorRounded } from "@mui/icons-material";
 
@@ -156,12 +156,14 @@ function ContactCopy() {
           </div>
           <div style={{ width: "50%", marginTop: "35px" }}>
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d7065.2877315871165!2d85.33180000000003!3d27.69740000000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2snp!4v1721978785936!5m2!1sen!2snp"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3538.761422162468!2d85.52515693064508!3d27.632584920631857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb0f33b1a23b53%3A0xe8ec0b92bdf38a54!2sBanepa!5e1!3m2!1sen!2snp!4v1724753989845!5m2!1sen!2snp"
               width="600"
               height="450"
-              allowfullscreen=""
+              className="border:0;"
+              allowFullS
+              creen=""
               loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
+              referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
           </div>
         </div>

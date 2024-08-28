@@ -30,6 +30,7 @@ function Register() {
           birthdate: data.birthdate,
           gender: data.gender,
           country: data.country,
+          profile_image: data.profile_image,
         },
       });
 
@@ -228,6 +229,13 @@ function Register() {
             <div className="text-red-700">
               {errors.country && errors.country.message}
             </div>
+            <label>imageLink:</label>
+            <input
+              type="text"
+              placeholder="profile_image"
+              {...register("profile_image", {})}
+              className="border w-full text-base px-2 py-1 focus:outline-none p-2"
+            />
 
             <button
               type="submit"

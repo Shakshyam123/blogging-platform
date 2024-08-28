@@ -30,7 +30,7 @@ db.connect((err) => {
 
 app.post("/nepal", (req, res) => {
   console.log(req.body);
-  const { first_name, last_name, email, password, birthdate, gender, country } =
+  const { first_name, last_name, email, password, birthdate, gender, country, profile_image } =
     req.body;
   console.log("Received data:", req.body);
 
@@ -41,13 +41,14 @@ app.post("/nepal", (req, res) => {
     !password ||
     !birthdate ||
     !gender ||
-    !country
+    !country||
+    !profile_image
   ) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
   const sql =
-    "INSERT INTO register (first_name, last_name, email, password, birthdate, gender, country) VALUES (?, ?, ?,?, ?, ?, ?)";
+    "INSERT INTO register (first_name, last_name, email, password, birthdate, gender, country,profile_image) VALUES (?, ?, ?,?, ?, ?, ?, ?)";
   bcrypt.hash(password, salt, (err, hash) => {
     if (err) {
       console.log(err);
@@ -61,6 +62,7 @@ app.post("/nepal", (req, res) => {
       birthdate,
       gender,
       country,
+      profile_image,
     ];
 
     db.query(sql, values, (err, result) => {
@@ -77,7 +79,7 @@ app.post("/nepal", (req, res) => {
 app.get("/register", (req, res) => {
   const email = "boharashakshyam@gmail.com";
   const sql =
-    "SELECT first_name, last_name, email, password, birthdate, gender, country FROM register WHERE email=?";
+    "SELECT first_name, last_name, email, password, birthdate, gender, country, profile_image FROM register WHERE email=?";
 
   db.query(sql, [email], (err, results) => {
     if (err) {
@@ -246,7 +248,7 @@ app.get("/getProfile", authenticationToken, (req, res) => {
     if (results.length === 0) {
       return res.status(404).json({ msg: "User not found" });
     }
-    console.log("this is a reesult", results);
+    console.log("this is a result", results);
     return res.status(200).json(results[0]);
   });
 });
@@ -260,14 +262,21 @@ app.get("/getBlog", authenticationToken, (req, res) => {
     return res.status(200).json(results);
   });   
 });
-app.get("/hoverModel", authenticationToken, (req, res) => {
-  const sql = "SELECT author_name,image_link,heading FROM blog_posts";
-  db.query(sql, (err, results) => {
+app.get("/authorDetail", authenticationToken, (req, res) => {
+  const email="shakshyam@gmail.com"
+  const sql = "SELECT first_name, last_name, email birthdate, gender, country,profile_image FROM register where email=?";
+  db.query(sql, [email],(err, results) => {
     if (err) {
       return res.status(500).send("Error fetching blog posts");
     }
-    return res.status(200).send(results[4]);
+    return res.status(200).send(results[0]);
   });
+});
+app.post("/blogLike", authenticationToken, (req, res) => {
+  const like=req.body;
+if(like){
+  res.status(400).send("connected backend")
+}
 });
 
 app.get("/reccomendation", authenticationToken, (req, res) => {

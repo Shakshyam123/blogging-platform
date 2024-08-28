@@ -32,6 +32,7 @@ function BlogContent() {
 
   const [open, setOpen] = useState(false);
   const [onHoverModel, setOnHoverModel] = useState(false);
+  const [blogLike, setBlogLike] = useState("");
 
   useEffect(() => {
     setIsClient(true);
@@ -65,6 +66,18 @@ function BlogContent() {
       });
     } catch (err) {
       console.log(err);
+    }
+  }
+  async function blogLikes() {
+    try {
+      const response = await axios.post("http://localhost:5000/blogLike", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setBlogLike(response.data);
+    } catch (error) {
+      console.log(error);
     }
   }
   // const handleDelete = async (id) => {
@@ -185,10 +198,16 @@ function BlogContent() {
                     />
                     Mar 20
                     <div>
-                      <FontAwesomeIcon
-                        icon={faHandsClapping}
-                        className="mr-1"
-                      />
+                      <button
+                        onClick={() => {
+                          blogLikes();
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          icon={faHandsClapping}
+                          className="mr-1"
+                        />
+                      </button>
                       1.7k
                       {post.likes}
                     </div>
@@ -237,7 +256,7 @@ function BlogContent() {
           <div className="">
             <h1 className="font-bold mb-9">Recommendation</h1>
           </div>
-          <div className="overflow-auto h-64">
+          <div className="">
             {data.map((post) => (
               <>
                 <div
