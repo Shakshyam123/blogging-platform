@@ -11,7 +11,7 @@ export default function About() {
       <h1 className="text-3xl pl-14 pr-10 pt-10 ml-7">
         <a href="" className="text-4xl">
           About us
-        </a>{" "}
+        </a>
         <br />
         <nav className=" text-gray-500 text-sm flex justify-end mb-4">
           <ul className="flex ">

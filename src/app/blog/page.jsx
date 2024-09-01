@@ -19,6 +19,7 @@ import Cookie from "js-cookie";
 import Modal from "../blog/openModal/page";
 import HoverModel from "./hoverMOdel/page";
 import useStore from "@/store/useStore";
+import { useSearchParams } from "next/navigation";
 import { Trykker } from "next/font/google";
 
 function BlogContent() {
@@ -29,10 +30,13 @@ function BlogContent() {
   const [isClient, setIsClient] = useState(false);
   const login = useStore((state) => state.login);
   const logout = useStore((state) => state.logout);
+  const searchParams = useSearchParams();
+
+  const [like, setLike] = useState([]);
 
   const [open, setOpen] = useState(false);
   const [onHoverModel, setOnHoverModel] = useState(false);
-  const [blogLike, setBlogLike] = useState("");
+  const [isLike, setIsLike] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -68,14 +72,23 @@ function BlogContent() {
       console.log(err);
     }
   }
-  async function blogLikes() {
+
+  async function likePost(id) {
+    const token = Cookie.get("token");
+    console.log("Tokens", token);
+    console.log(id);
     try {
-      const response = await axios.post("http://localhost:5000/blogLike", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.put(
+        `http://localhost:5000/blogLike/${id}`,
+        {
+          headers: {
+            "content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
-      setBlogLike(response.data);
+        { data: JSON.stringify({ id }) }
+      );
+      setLike(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -200,7 +213,7 @@ function BlogContent() {
                     <div>
                       <button
                         onClick={() => {
-                          blogLikes();
+                          likePost(post.id);
                         }}
                       >
                         <FontAwesomeIcon
@@ -208,8 +221,7 @@ function BlogContent() {
                           className="mr-1"
                         />
                       </button>
-                      1.7k
-                      {post.likes}
+                      {like}like
                     </div>
                   </div>
                   <div className="flex mt-0.5">

@@ -12,12 +12,14 @@ app.use(bodyParser.json());
 const JWT_SECRETE = "this is a serious password";
 
 const salt = 10;
+
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "root",
   database: "express",
   JWT_SECRET: process.env.JWT_SECRET,
+  
 });
 
 db.connect((err) => {
@@ -221,18 +223,18 @@ async function verifyAccessToken(token) {
 async function authenticationToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
+  console.log("this is baneof a token",token)
 
   if (!token) {
     return res.sendStatus(401);
   }
 
   const result = await verifyAccessToken(token);
-
   if (!result.success) {
     return res.status(403).json({ error: result.error });
   }
 
-  req.user = result.data;
+  req.user = result.data
   next();
 }
 
@@ -253,7 +255,8 @@ app.get("/getProfile", authenticationToken, (req, res) => {
   });
 });
 
-app.get("/getBlog", authenticationToken, (req, res) => {
+  
+app.get("/getBlog", authenticationToken, (req, res) => { 
   const sql = "SELECT * FROM blog_posts";
   db.query(sql, (err, results) => {
     if (err) {
@@ -272,12 +275,55 @@ app.get("/authorDetail", authenticationToken, (req, res) => {
     return res.status(200).send(results[0]);
   });
 });
-app.post("/blogLike", authenticationToken, (req, res) => {
-  const like=req.body;
-if(like){
-  res.status(400).send("connected backend")
-}
-});
+app.put("/blogLike/:id", authenticationToken, (req, res) => {
+  const userId=req.user.id;
+  const postId=req.params.id;
+ 
+      const Selecting= "select * from blog_like";
+      db.query(Selecting,[userId,postId],(error,result)=>{
+        if (error){
+          return res.status(500).json("erorr in posting like", error)
+        }
+        if(result.length >  0){
+         return res.status(400).json("post liked successfully",result)
+        }
+        const sql= "INSERT into blog_like(Blog_id,User_id) VALUES(?,?)";
+        db.query(sql,[userId,postId],(error,result)=>{
+          if (error){
+            return res.status(404).json("erorr in posting like", error)
+          }else{
+            res.status(200).json("blog liked successfully",result)
+          }
+        })
+      })
+    });  
+// app.get("/blogLike", authenticationToken, (req, res) => {
+//   const id=req.body;
+//   console.log("thisi s id",id)
+//   const sql= "select * from blog_like";  
+//   db.query(sql,(error,result)=>{
+//   if (error){ 
+//     return res.status(404).send("erorr in posting like", error)
+//   }else{
+//     res.status(200).send("get blog liked successfully",result)
+//   }
+// })
+// });
+
+
+
+// db.findByIdAndUpdate(req.body.id,{
+//   $push:{likes:req.user.id}},
+//   {
+//     new:true
+//   }).exec((err,result)=>{
+//     if(err){
+//       res.status(422).send({error:err})
+//     }else{
+//       res.json(result)
+//     }
+//   })
+
 
 app.get("/reccomendation", authenticationToken, (req, res) => {
   const sql = "SELECT * FROM blog_posts";
@@ -288,22 +334,6 @@ app.get("/reccomendation", authenticationToken, (req, res) => {
     return res.status(200).json(results);
   });
 });
-// app.get("/getProfile", (req, res) => {
-//   const email = "boharashakshyam@gmail.com";
-//   const SQL =
-//     "SELECT first_name, last_name, birthdate, gender, country FROM register WHERE email=?";
-//   db.query(SQL, [email], (err, results) => {
-//     if (err) {
-//       console.log("error data fetching from register", err);
-//       res.status(500).json("Error fetching blog posts", err);
-//     }
-//     if (results.length === 0) {
-//       res.status(404).json("email or password is incorrect");
-//     }
-//     console.log(results);
-//     res.status(200).json(results);
-//   });
-// });
 
 module.exports = app;
 app.listen(PORT, () => {

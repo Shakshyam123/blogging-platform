@@ -12,6 +12,7 @@ export default function Profile() {
   const router = useRouter();
   const token = Cookie.get("token");
   const [hydration, setHydration] = useState(false);
+
   async function getData() {
     setLoading(true);
 
