@@ -91,14 +91,14 @@ function Post() {
                 <button className="size-5">
                   <FontAwesomeIcon icon={faShare} />
                 </button>
-                <p className="size-5">
+                <div className="size-5">
                   <div className="relative">
                     <button className="relative">
                       {" "}
                       <FontAwesomeIcon icon={faEllipsis} />
                     </button>
                   </div>
-                </p>
+                </div>
               </div>
             </div>
             <Image

@@ -1,5 +1,4 @@
 "use client";
-
 import Navbar from "../navbar/page";
 import Image from "next/image";
 import axios from "axios";
@@ -24,6 +23,7 @@ import { Trykker } from "next/font/google";
 
 function BlogContent() {
   const token = Cookie.get("token");
+  console.log("first token", token);
   const router = useRouter();
   const [data, setData] = useState([]);
   const [data2, setData2] = useState([]);
@@ -33,14 +33,13 @@ function BlogContent() {
   const searchParams = useSearchParams();
 
   const [like, setLike] = useState([]);
-
   const [open, setOpen] = useState(false);
   const [onHoverModel, setOnHoverModel] = useState(false);
-  const [isLike, setIsLike] = useState(false);
-
+  // const [isLike, setIsLike] = useState(false);
+  // console.log("this is a like", like);
+  // const [hydration, setHydration] = useState(false);
   useEffect(() => {
     setIsClient(true);
-
     if (!token) {
       router.push("/login");
     } else {
@@ -61,6 +60,7 @@ function BlogContent() {
       console.error("Error fetching data:", error);
     }
   }
+
   async function getNewData() {
     try {
       const res = await axios.get("http://localhost:5000/reccomendation", {
@@ -75,24 +75,24 @@ function BlogContent() {
 
   async function likePost(id) {
     const token = Cookie.get("token");
-    console.log("Tokens", token);
-    console.log(id);
     try {
       const response = await axios.put(
         `http://localhost:5000/blogLike/${id}`,
+        { id },
         {
           headers: {
-            "content-Type": "application/json",
+            "Content-type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        },
-        { data: JSON.stringify({ id }) }
+        }
       );
-      setLike(response.data);
+      setLike(response);
+      console.log("This is a response", response);
     } catch (error) {
-      console.log(error);
+      console.log("Error:", error);
     }
   }
+
   // const handleDelete = async (id) => {
   //   try {
   //     await axios.delete(`http://localhost:5000/deletePost/${id}`, {
@@ -146,8 +146,8 @@ function BlogContent() {
       <hr className="mb-10" />
       <div className="flex">
         <div>
-          {data.map((post, index) => (
-            <div key={index}>
+          {data.map((post) => (
+            <div key={post.id}>
               <div
                 className="ml-20 mr-14 mt-5 cursor-pointer"
                 onClick={() => handleClick(post.id)}
@@ -221,7 +221,10 @@ function BlogContent() {
                           className="mr-1"
                         />
                       </button>
-                      {like}like
+                      {/* {like.map((data) => (
+                        <>{data.id}</>
+                      ))} */}
+                      {data.like}
                     </div>
                   </div>
                   <div className="flex mt-0.5">

@@ -19,7 +19,6 @@ const db = mysql.createConnection({
   password: "root",
   database: "express",
   JWT_SECRET: process.env.JWT_SECRET,
-  
 });
 
 db.connect((err) => {
@@ -32,8 +31,16 @@ db.connect((err) => {
 
 app.post("/nepal", (req, res) => {
   console.log(req.body);
-  const { first_name, last_name, email, password, birthdate, gender, country, profile_image } =
-    req.body;
+  const {
+    first_name,
+    last_name,
+    email,
+    password,
+    birthdate,
+    gender,
+    country,
+    profile_image,
+  } = req.body;
   console.log("Received data:", req.body);
 
   if (
@@ -43,7 +50,7 @@ app.post("/nepal", (req, res) => {
     !password ||
     !birthdate ||
     !gender ||
-    !country||
+    !country ||
     !profile_image
   ) {
     return res.status(400).json({ error: "All fields are required" });
@@ -171,7 +178,6 @@ app.post("/login", (req, res) => {
 
   const sql = "SELECT * FROM register WHERE email=?";
   const values = [email];
-
   db.query(sql, values, async (error, results) => {
     if (error) {
       console.error("Error executing query:", error);
@@ -189,7 +195,6 @@ app.post("/login", (req, res) => {
         return res.status(401).send({ msg: "Email or password is incorrect" });
       }
 
-      // Generate JWT
       const token = jwt.sign(
         {
           id: results[0].id,
@@ -197,9 +202,8 @@ app.post("/login", (req, res) => {
           is_admin: results[0].is_admin,
         },
         JWT_SECRETE,
-        { expiresIn: "1h" } // optional: set token expiration
+        { expiresIn: "1h" }
       );
-
       return res.status(200).send({
         msg: "Logged in",
         token,
@@ -214,6 +218,7 @@ app.post("/login", (req, res) => {
 async function verifyAccessToken(token) {
   try {
     const decoded = await jwt.verify(token, JWT_SECRETE);
+    console.log("thisis decideed", decoded);
     return { success: true, data: decoded };
   } catch (err) {
     return { success: false, error: err };
@@ -222,8 +227,9 @@ async function verifyAccessToken(token) {
 
 async function authenticationToken(req, res, next) {
   const authHeader = req.headers["authorization"];
+  console.log("thisis atherader", authHeader);
   const token = authHeader && authHeader.split(" ")[1];
-  console.log("this is baneof a token",token)
+  console.log("this auth token a token", token);
 
   if (!token) {
     return res.sendStatus(401);
@@ -234,7 +240,7 @@ async function authenticationToken(req, res, next) {
     return res.status(403).json({ error: result.error });
   }
 
-  req.user = result.data
+  req.user = result.data;
   next();
 }
 
@@ -255,20 +261,20 @@ app.get("/getProfile", authenticationToken, (req, res) => {
   });
 });
 
-  
-app.get("/getBlog", authenticationToken, (req, res) => { 
+app.get("/getBlog", authenticationToken, (req, res) => {
   const sql = "SELECT * FROM blog_posts";
   db.query(sql, (err, results) => {
     if (err) {
       return res.status(500).send("Error fetching blog posts");
     }
     return res.status(200).json(results);
-  });   
+  });
 });
 app.get("/authorDetail", authenticationToken, (req, res) => {
-  const email="shakshyam@gmail.com"
-  const sql = "SELECT first_name, last_name, email birthdate, gender, country,profile_image FROM register where email=?";
-  db.query(sql, [email],(err, results) => {
+  const email = "shakshyam@gmail.com";
+  const sql =
+    "SELECT first_name, last_name, email birthdate, gender, country,profile_image FROM register where email=?";
+  db.query(sql, [email], (err, results) => {
     if (err) {
       return res.status(500).send("Error fetching blog posts");
     }
@@ -276,43 +282,28 @@ app.get("/authorDetail", authenticationToken, (req, res) => {
   });
 });
 app.put("/blogLike/:id", authenticationToken, (req, res) => {
-  const userId=req.user.id;
-  const postId=req.params.id;
- 
-      const Selecting= "select * from blog_like";
-      db.query(Selecting,[userId,postId],(error,result)=>{
-        if (error){
-          return res.status(500).json("erorr in posting like", error)
-        }
-        if(result.length >  0){
-         return res.status(400).json("post liked successfully",result)
-        }
-        const sql= "INSERT into blog_like(Blog_id,User_id) VALUES(?,?)";
-        db.query(sql,[userId,postId],(error,result)=>{
-          if (error){
-            return res.status(404).json("erorr in posting like", error)
-          }else{
-            res.status(200).json("blog liked successfully",result)
-          }
-        })
-      })
-    });  
-// app.get("/blogLike", authenticationToken, (req, res) => {
-//   const id=req.body;
-//   console.log("thisi s id",id)
-//   const sql= "select * from blog_like";  
-//   db.query(sql,(error,result)=>{
-//   if (error){ 
-//     return res.status(404).send("erorr in posting like", error)
-//   }else{
-//     res.status(200).send("get blog liked successfully",result)
-//   }
-// })
-// });
+  const userId = req.user.id;
+  const postId = req.body.id;
+  const like = "select * from blog_like where User_id=? and BLog_id=?";
+  db.query(like, [userId, postId], (error, result) => {
+    if (error) {
+      return res.status(500).send("erorr in selecting like", error);
+    }
+    if (result.length > 0) {
+      return res.status(200).json(result);
+    }
+    const sql = "INSERT into blog_like (User_id,Blog_id) VALUES(?,?)";
+    db.query(sql, [userId, postId], (error, result) => {
+      if (error) {
+        return res.status(500).send("erorr in posting like", error);
+      } else {
+        res.status(201).json({ result: result, message: "already liked" });
+      }
+    });
+  });
+});
 
-
-
-// db.findByIdAndUpdate(req.body.id,{
+// db.query.findByIdAndUpdate(req.body.id,{
 //   $push:{likes:req.user.id}},
 //   {
 //     new:true
@@ -323,7 +314,6 @@ app.put("/blogLike/:id", authenticationToken, (req, res) => {
 //       res.json(result)
 //     }
 //   })
-
 
 app.get("/reccomendation", authenticationToken, (req, res) => {
   const sql = "SELECT * FROM blog_posts";
