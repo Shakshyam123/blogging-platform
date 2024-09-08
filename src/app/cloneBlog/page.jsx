@@ -19,7 +19,6 @@ import Modal from "../blog/openModal/page";
 import HoverModel from "../blog/hoverMOdel/page";
 import useStore from "@/store/useStore";
 import { useSearchParams } from "next/navigation";
-import { Trykker } from "next/font/google";
 
 function BlogContent() {
   const token = Cookie.get("token");
@@ -36,6 +35,7 @@ function BlogContent() {
   const [onHoverModel, setOnHoverModel] = useState(false);
   const [isLike, setIsLike] = useState(false);
   const [dislike, setDisLike] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
   console.log("this is a like", like);
   useEffect(() => {
     setIsClient(true);
@@ -86,6 +86,7 @@ function BlogContent() {
         }
       );
       setLike(response);
+      setLikeCount(response.data);
       console.log("This is a response", response);
     } catch (error) {
       console.log("Error:", error);
@@ -163,7 +164,7 @@ function BlogContent() {
       </h1>
       <hr className="mb-10" />
       <div className="flex">
-        <div>
+        <div className="w-[70%]sm:w-auto w-full">
           {data.map((post) => (
             <div key={post.id}>
               <div
@@ -215,7 +216,7 @@ function BlogContent() {
                       alt="Example Image"
                       width={500}
                       height={500}
-                      className="h-32 w-40 mb-8"
+                      className="h-32 w-40  mb-8"
                     />
                   </div>
                 </div>
@@ -233,17 +234,14 @@ function BlogContent() {
                         onClick={() => {
                           likePost(post.id);
                         }}
+                        className=" text-blue-800"
                       >
                         <FontAwesomeIcon
                           icon={faHandsClapping}
                           className="mr-1"
                         />
                       </button>
-                      {/* {Array.isArray(like) ? (
-                        like.map((item, index) => <p key={index}>{item}</p>)
-                      ) : (
-                        <p>0likes </p>
-                      )} */}
+
                       {data.like}
                     </div>
                   </div>
@@ -287,8 +285,8 @@ function BlogContent() {
             </div>
           ))}
         </div>
-        <div className="ml-20 ">
-          <div className="">
+        <div className="ml-20">
+          <div className=" sm:w-hidden md:w-96">
             <h1 className="font-bold mb-9">Recommendation</h1>
           </div>
           <div className="">

@@ -55,7 +55,7 @@ export default function Profile() {
             <div className="flex items-center justify-between border-b pb-4 mb-4">
               <div className="flex items-center space-x-4">
                 <Image
-                  src="/image3.jpg"
+                  src={data.profile_image}
                   alt="Example Image"
                   width={500}
                   height={500}

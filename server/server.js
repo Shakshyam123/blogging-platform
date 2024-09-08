@@ -218,7 +218,7 @@ app.post("/login", (req, res) => {
 async function verifyAccessToken(token) {
   try {
     const decoded = await jwt.verify(token, JWT_SECRETE);
-    console.log("thisis decideed", decoded);
+    console.log("this is decodedcode ", decoded);
     return { success: true, data: decoded };
   } catch (err) {
     return { success: false, error: err };
@@ -248,7 +248,7 @@ app.get("/getProfile", authenticationToken, (req, res) => {
   const userEmail = req.user.email;
 
   const SQL =
-    "SELECT first_name, last_name, birthdate, gender, email, country FROM register WHERE email=?";
+    "SELECT first_name, last_name, birthdate, gender, email, country,profile_image FROM register WHERE email=?";
   db.query(SQL, [userEmail], (err, results) => {
     if (err) {
       return res.status(500).json({ msg: "Error fetching profile data", err });
@@ -284,24 +284,69 @@ app.get("/authorDetail", authenticationToken, (req, res) => {
 app.put("/blogLike/:id", authenticationToken, (req, res) => {
   const userId = req.user.id;
   const postId = req.body.id;
-  const like = "select * from blog_like where User_id=? and BLog_id=?";
-  db.query(like, [userId, postId], (error, result) => {
+
+  const likeQuery = "SELECT * FROM blog_like WHERE User_id = ? AND Blog_id = ?";
+  db.query(likeQuery, [userId, postId], (error, result) => {
     if (error) {
-      return res.status(500).send("erorr in selecting like", error);
+      return res.status(500).send("Error in selecting like: " + error.message);
     }
     if (result.length > 0) {
-      return res.status(200).json(result);
+      return res.status(200).json({ message: "Post already liked" });
+    } else {
+      const insertQuery =
+        "INSERT INTO blog_like (User_id, Blog_id) VALUES (?, ?)";
+      db.query(insertQuery, [userId, postId], (error, insertResult) => {
+        if (error) {
+          return res
+            .status(500)
+            .send("Error in posting like: " + error.message);
+        } else {
+          return res.status(201).json({
+            result: insertResult,
+            message: "Like successfully added",
+          });
+        }
+      });
     }
-    const sql = "INSERT into blog_like (User_id,Blog_id) VALUES(?,?)";
-    db.query(sql, [userId, postId], (error, result) => {
-      if (error) {
-        return res.status(500).send("erorr in posting like", error);
-      } else {
-        res.status(201).json({ result: result, message: "already liked" });
-      }
-    });
   });
 });
+app.put("/dislike", authenticationToken, (req, res) => {
+  const userId = req.user.id;
+  const postId = req.body.id;
+  const query = "delete from blog_like where id=?";
+  db.query(query, [userId, postId], (result, error) => {
+    if (error) {
+      res
+        .status(500)
+        .send({ error: error.message, message: "error in deleting like" });
+    } else {
+      res.status(201).json("successfully deleted");
+    }
+  });
+});
+// app.put("/blogLike/:id", authenticationToken, (req, res) => {
+//   const userId = req.user.id;
+//   const postId = req.body.id;
+//   const like = "select * from blog_like where User_id=? and BLog_id=?";
+//   db.query(like, [userId, postId], (error, result) => {
+//     if (result.length === 0) {
+//       return res.status(500).send(error);
+//     }
+//     if (result.length > 0) {
+//       return res.status(200).json(result);
+//     }
+//     const sql = "delete from blog_like where User_id=? Blog_id=?";
+//     db.query(sql, [userId, postId], (error, result) => {
+//       if (error) {
+//         return res.status(500).send("erorr in posting like", error);
+//       } else {
+//         res
+//           .status(201)
+//           .json({ result: result, message: "deleted successfully" });
+//       }
+//     });
+//   });
+// });
 
 // db.query.findByIdAndUpdate(req.body.id,{
 //   $push:{likes:req.user.id}},
