@@ -262,7 +262,9 @@ app.get("/getProfile", authenticationToken, (req, res) => {
 });
 
 app.get("/getBlog", authenticationToken, (req, res) => {
-  const sql = "SELECT * FROM blog_posts";
+  const sql = `SELECT * FROM blog_posts AS bp INNER JOIN blog_like AS bl ON bp.id = bl.blog_id`;
+
+  console.log("this is sql", sql);
   db.query(sql, (err, results) => {
     if (err) {
       return res.status(500).send("Error fetching blog posts");
@@ -271,7 +273,8 @@ app.get("/getBlog", authenticationToken, (req, res) => {
   });
 });
 app.get("/authorDetail", authenticationToken, (req, res) => {
-  const email = "shakshyam@gmail.com";
+  const userEmail = req.user.email;
+  const email = userEmail;
   const sql =
     "SELECT first_name, last_name, email birthdate, gender, country,profile_image FROM register where email=?";
   db.query(sql, [email], (err, results) => {
@@ -284,6 +287,8 @@ app.get("/authorDetail", authenticationToken, (req, res) => {
 app.put("/blogLike/:id", authenticationToken, (req, res) => {
   const userId = req.user.id;
   const postId = req.body.id;
+  console.log("userId", userId);
+  console.log("this is a post id", postId);
 
   const likeQuery = "SELECT * FROM blog_like WHERE User_id = ? AND Blog_id = ?";
   db.query(likeQuery, [userId, postId], (error, result) => {

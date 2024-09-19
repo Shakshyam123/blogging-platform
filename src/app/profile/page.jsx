@@ -8,14 +8,11 @@ import { useRouter } from "next/navigation";
 
 export default function Profile() {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const token = Cookie.get("token");
-  const [hydration, setHydration] = useState(false);
 
   async function getData() {
-    setLoading(true);
-
     try {
       const response = await axios.get("http://localhost:5000/getProfile", {
         headers: {
@@ -32,7 +29,6 @@ export default function Profile() {
   }
 
   useEffect(() => {
-    setHydration(false);
     if (!token) {
       router.push("/login");
     } else {
@@ -47,6 +43,7 @@ export default function Profile() {
   if (!data) {
     return <div>No data available</div>;
   }
+
   return (
     <>
       <>

@@ -19,7 +19,6 @@ import Modal from "../blog/openModal/page";
 import HoverModel from "../blog/hoverMOdel/page";
 import useStore from "@/store/useStore";
 import { useSearchParams } from "next/navigation";
-import { Trykker } from "next/font/google";
 
 function BlogContent() {
   const token = Cookie.get("token");
@@ -36,6 +35,7 @@ function BlogContent() {
   const [onHoverModel, setOnHoverModel] = useState(false);
   const [isLike, setIsLike] = useState(false);
   const [dislike, setDisLike] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
   console.log("this is a like", like);
   useEffect(() => {
     setIsClient(true);
@@ -55,6 +55,7 @@ function BlogContent() {
         },
       });
       setData(response.data);
+      console.log("this is a response", response);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -86,6 +87,7 @@ function BlogContent() {
         }
       );
       setLike(response);
+      setLikeCount(response.data);
       console.log("This is a response", response);
     } catch (error) {
       console.log("Error:", error);
@@ -163,7 +165,7 @@ function BlogContent() {
       </h1>
       <hr className="mb-10" />
       <div className="flex">
-        <div>
+        <div className="  w-full sm:w-auto">
           {data.map((post) => (
             <div key={post.id}>
               <div
@@ -202,20 +204,20 @@ function BlogContent() {
                       </div>
                       <div className="text-sm mb-4">{post.author_name}</div>
                     </div>
-                    <div className="font-extrabold text-2xl mb-3 w-96">
+                    <div className="font-extrabold md:text-2xl mb-3 md:w-96">
                       {post.title}
                     </div>
-                    <div className="text-gray-600 mb-5 w-96">
+                    <div className="text-gray-600 mb-5 md:w-96">
                       {post.heading}
                     </div>
                   </div>
-                  <div className="ml-7">
+                  <div className="md:ml-7">
                     <Image
                       src={post.image_link}
                       alt="Example Image"
                       width={500}
                       height={500}
-                      className="h-32 w-40 mb-8"
+                      className="h-32 w-36  object-cover"
                     />
                   </div>
                 </div>
@@ -233,17 +235,14 @@ function BlogContent() {
                         onClick={() => {
                           likePost(post.id);
                         }}
+                        className=" text-blue-800"
                       >
                         <FontAwesomeIcon
                           icon={faHandsClapping}
                           className="mr-1"
                         />
                       </button>
-                      {/* {Array.isArray(like) ? (
-                        like.map((item, index) => <p key={index}>{item}</p>)
-                      ) : (
-                        <p>0likes </p>
-                      )} */}
+
                       {data.like}
                     </div>
                   </div>
@@ -287,35 +286,31 @@ function BlogContent() {
             </div>
           ))}
         </div>
-        <div className="ml-20 ">
-          <div className="">
-            <h1 className="font-bold mb-9">Recommendation</h1>
-          </div>
+        <div className="ml-20 hidden md:block md:w-96">
+          <h1 className="font-bold mb-9">Recommendation</h1>
           <div className="">
             {data.map((post) => (
-              <>
-                <div
-                  className="w-80 mb-8  cursor-pointer"
-                  onClick={() => handleClick(post.id)}
-                >
-                  <div className="flex gap-4 ">
-                    <Image
-                      src={post.image_link}
-                      alt="Example Image"
-                      width={20}
-                      height={20}
-                      className="rounded-full mb-4 h-5 w-5"
-                      referrerPolicy="no-referrer"
-                    />
-                    <h1 className="text-xm ">{post.author_name}</h1>
-                  </div>
-                  <div className="font-bold">{post.heading}</div>
+              <div
+                key={post.id}
+                className="w-80 mb-8 cursor-pointer"
+                onClick={() => handleClick(post.id)}
+              >
+                <div className="flex gap-4 md:row">
+                  <Image
+                    src={post.image_link}
+                    alt="Example Image"
+                    width={20}
+                    height={20}
+                    className="rounded-full mb-4 h-5 w-5"
+                    referrerPolicy="no-referrer"
+                  />
+                  <h1 className="text-xm ">{post.author_name}</h1>
                 </div>
-              </>
+                <div className="font-bold">{post.heading}</div>
+              </div>
             ))}
           </div>
         </div>
-        {/* <Link href="/home">See more suggestions</Link> */}
       </div>
 
       <button onClick={Logout} className="mt-10">

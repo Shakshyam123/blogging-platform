@@ -26,8 +26,8 @@ function Navbar() {
         </div>
         <div
           ref={navLinksRef}
-          className={`md:static absolute md:min-h-fit min-h-[60vh] left-0 ${
-            isMenuOpen ? "top-[30%]" : "top-[-130%]"
+          className={`md:static absolute md:min-h-fit min-h-[60vh] left-[40%] ${
+            isMenuOpen ? "top-[10%] bg-red-300" : "top-[-130%]"
           } md:w-auto w-full flex items-center px-5 transition-all duration-300`}
         >
           <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8 text-black md:text-white">

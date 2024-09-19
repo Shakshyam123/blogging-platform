@@ -46,7 +46,7 @@ function Navbar() {
           </ul>
         </div>
 
-        <div className="mt-2 flex gap-2 text-white">
+        <div className="mt-2 flex gap-2 text-white md:">
           {!isAuthenticated ? (
             <>
               {logout ? (
