@@ -14,15 +14,14 @@ function ContactCopy() {
   } = useForm();
   console.log(errors);
 
-  async function onSubmit(data) {
+  async function onSubmit(data, reset) {
     try {
-      const response = await axios({
-        method: "post",
+      const response = await axios.post("http://localhost:5000/contact", data);
+      if (response.data === "successfully send") {
+        reset();
+        alert("successfully sent");
+      }
 
-        url: "http://localhost:5000/contact",
-
-        data: data,
-      });
       console.log("this is a response", response);
       console.log("this is a data", data);
     } catch (error) {

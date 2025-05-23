@@ -52,7 +52,10 @@ export default function Profile() {
             <div className="flex items-center justify-between border-b pb-4 mb-4">
               <div className="flex items-center space-x-4">
                 <Image
-                  src={data.profile_image}
+                  src={
+                    data.profile_image ||
+                    "https://imgs.search.brave.com/sHfS5WDNtJlI9C_CT2YL2723HttEALNRtpekulPAD9Q/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA2LzMzLzU0Lzc4/LzM2MF9GXzYzMzU0/Nzg0Ml9BdWdZemV4/VHBNSjl6MVljcFRL/VUJvcUJGMENVQ2sx/MC5qcGc"
+                  }
                   alt="Example Image"
                   width={500}
                   height={500}

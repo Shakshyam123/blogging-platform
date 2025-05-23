@@ -6,11 +6,13 @@ import Image from "next/image";
 import useStore from "../../store/useStore.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import Modal from "../profile/MOdelProfile/page.jsx";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navLinksRef = useRef(null);
   const { login, logout, isAuthenticated } = useStore();
+  const [open, setOpen] = useState(false);
 
   const onToggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -76,15 +78,26 @@ function Navbar() {
           ) : (
             <>
               {login ? (
-                <Link href="/profile" className="mb-2">
-                  <Image
-                    src="/image3.jpg"
-                    alt="Example Image"
-                    width={50}
-                    height={50}
-                    className="rounded-full mb-3 mr-7"
-                  />
-                </Link>
+                <>
+                  <div>
+                    <div className="mb-2" onClick={setOpen}>
+                      <Image
+                        src="/image3.jpg"
+                        alt="Example Image"
+                        width={50}
+                        height={50}
+                        className="rounded-full  mr-7 cursor-pointer "
+                      />
+                    </div>
+                    <Modal
+                      className=""
+                      open={open}
+                      onClose={() => {
+                        setOpen(false);
+                      }}
+                    ></Modal>
+                  </div>
+                </>
               ) : (
                 <>
                   <Link href="/login" className="mt-3">

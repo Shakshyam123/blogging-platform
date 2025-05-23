@@ -19,10 +19,44 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 function Post() {
+  const [like, setLike] = useState({});
   const token = Cookie.get("token");
   const [post, setPost] = useState(null);
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  async function likePost(id) {
+    const token = Cookie.get("token");
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/blogLike/${id}`,
+        { id },
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        setLike((prev) => {
+          const updatedLikes = {
+            ...prev,
+            [id]: (prev[id] || 0) + 1,
+          };
+          localStorage.setItem("likeCounts", JSON.stringify(updatedLikes));
+
+          return updatedLikes;
+        });
+      } else if (response.status === 200) {
+        alert("Post already liked");
+      }
+      console.log("This is a response", response);
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  }
   async function getData(id) {
     try {
       const response = await axios.get(`http://localhost:5000/getPost/${id}`);
@@ -71,7 +105,20 @@ function Post() {
               <div className="flex gap-9">
                 <div className="text-center flex gap-3">
                   <button className="size-5 flex gap-1 ">
-                    <FontAwesomeIcon icon={faHandsClapping} /> 12k{" "}
+                    <div className="flex">
+                      <button
+                        onClick={() => {
+                          likePost(post.id);
+                        }}
+                      >
+                        <FontAwesomeIcon
+                          icon={faHandsClapping}
+                          className="mr-1"
+                        />
+                      </button>
+
+                      {like[post.id] || 0}
+                    </div>
                   </button>
                 </div>
                 <div className="flex gap-3">

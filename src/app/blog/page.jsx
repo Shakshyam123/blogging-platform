@@ -19,21 +19,19 @@ import Modal from "../blog/openModal/page";
 import HoverModel from "../blog/hoverMOdel/page";
 import useStore from "@/store/useStore";
 import { useSearchParams } from "next/navigation";
-
+import Cookies from "js-cookie";
 function BlogContent() {
   const token = Cookie.get("token");
   console.log("first token", token);
   const router = useRouter();
   const [data, setData] = useState([]);
-  const [data2, setData2] = useState([]);
   const [isClient, setIsClient] = useState(false);
   const login = useStore((state) => state.login);
   const logout = useStore((state) => state.logout);
   const searchParams = useSearchParams();
-  const [like, setLike] = useState(0);
+  const [like, setLike] = useState({});
   const [open, setOpen] = useState(false);
   const [onHoverModel, setOnHoverModel] = useState(false);
-  const [isLike, setIsLike] = useState(false);
   const [dislike, setDisLike] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   console.log("this is a like", like);
@@ -55,7 +53,7 @@ function BlogContent() {
         },
       });
       setData(response.data);
-      console.log("this is a response", response);
+      console.log("this os a response", response);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -86,8 +84,20 @@ function BlogContent() {
           },
         }
       );
-      setLike(response);
-      setLikeCount(response.data);
+
+      if (response.status === 201) {
+        setLike((prev) => {
+          const updatedLikes = {
+            ...prev,
+            [id]: (prev[id] || 0) + 1,
+          };
+          localStorage.setItem("likeCounts", JSON.stringify(updatedLikes));
+
+          return updatedLikes;
+        });
+      } else if (response.status === 200) {
+        alert("Post already liked");
+      }
       console.log("This is a response", response);
     } catch (error) {
       console.log("Error:", error);
@@ -133,12 +143,12 @@ function BlogContent() {
       console.log("id not found");
     }
   };
-
-  const Logout = () => {
-    Cookie.remove("token", { path: "" });
-    logout();
-    router.push("/login");
-  };
+  useEffect(() => {
+    const storedLikes = JSON.parse(localStorage.getItem("likeCounts"));
+    if (storedLikes) {
+      setLike(storedLikes);
+    }
+  }, []);
   if (!token || !isClient) {
     return null;
   }
@@ -235,7 +245,6 @@ function BlogContent() {
                         onClick={() => {
                           likePost(post.id);
                         }}
-                        className=" text-blue-800"
                       >
                         <FontAwesomeIcon
                           icon={faHandsClapping}
@@ -243,7 +252,7 @@ function BlogContent() {
                         />
                       </button>
 
-                      {data.like}
+                      {like[post.id] || 0}
                     </div>
                   </div>
                   <div className="flex mt-1">
@@ -312,10 +321,6 @@ function BlogContent() {
           </div>
         </div>
       </div>
-
-      <button onClick={Logout} className="mt-10">
-        Logout
-      </button>
     </>
   );
 }

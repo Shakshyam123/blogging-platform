@@ -15,12 +15,11 @@ const salt = 10;
 
 const db = mysql.createConnection({
   host: "localhost",
-  user: "root",
   password: "root",
   database: "express",
   JWT_SECRET: process.env.JWT_SECRET,
 });
-
+  
 db.connect((err) => {
   if (err) {
     console.error("Database connection failed:", err);
@@ -262,13 +261,32 @@ app.get("/getProfile", authenticationToken, (req, res) => {
 });
 
 app.get("/getBlog", authenticationToken, (req, res) => {
-  const sql = `SELECT * FROM blog_posts AS bp INNER JOIN blog_like AS bl ON bp.id = bl.blog_id`;
+  // const sql = `SELECT * FROM blog_posts `;
+  // const sql = `SELECT * FROM blog_posts AS bp RIGHT JOIN blog_like AS bl ON bp.id = bl.blog_id`;
 
+  const sql = ` SELECT 
+    bp.id,
+    bp.title,
+    bp.content,
+    bp.author_name,
+    bp.created_at,
+    bp.image_link,
+    bp.heading,
+    JSON_ARRAYAGG(bl.user_id) AS likes
+FROM 
+    blog_posts AS bp
+LEFT JOIN 
+    blog_like AS bl ON bp.id = bl.blog_id
+GROUP BY 
+    bp.id`;
   console.log("this is sql", sql);
+
   db.query(sql, (err, results) => {
     if (err) {
+      console.log("err", err);
       return res.status(500).send("Error fetching blog posts");
     }
+    console.log("blof result", results);
     return res.status(200).json(results);
   });
 });
@@ -292,6 +310,7 @@ app.put("/blogLike/:id", authenticationToken, (req, res) => {
 
   const likeQuery = "SELECT * FROM blog_like WHERE User_id = ? AND Blog_id = ?";
   db.query(likeQuery, [userId, postId], (error, result) => {
+    console.log("result", result);
     if (error) {
       return res.status(500).send("Error in selecting like: " + error.message);
     }

@@ -13,8 +13,8 @@ function Footer() {
   return (
     <div>
       <footer className="bg-black text-white h-80">
-        <div className="flex gap-16 p-14">
-          <div>
+        <div className="flex gap-16 p-14 ">
+          <div className=" w-auto ">
             <h1 className="text-white  text-2xl mb-3">Important Links</h1>
             <ul className="text-white hover:text-yellow-300 ">
               <li className="text-white hover:text-yellow-300 mb-2">
