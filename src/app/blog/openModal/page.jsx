@@ -54,9 +54,9 @@ function Modal({ open, onClose, childern }) {
           <hr className="mb-2 w-full" />
           <div className="ml-3 m-4">
             <h1 className="mb-2 hover:text-black cursor-pointer">
-              Unfollow author
+              dislike this post
             </h1>
-            <h1 className=" hover:text-black coursor-pointer">Follow author</h1>
+            <h1 className=" hover:text-black coursor-pointer">liked</h1>
           </div>
           <hr />
           <div className=" m-4">

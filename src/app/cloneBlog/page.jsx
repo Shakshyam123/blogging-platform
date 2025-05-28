@@ -242,7 +242,7 @@ function cloneBlog() {
                           className="mr-1"
                         />
                       </button>
-
+                      {post.like}
                       {data.like}
                     </div>
                   </div>

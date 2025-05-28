@@ -9,17 +9,19 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 app.use(cors());
 app.use(bodyParser.json());
+
 const JWT_SECRETE = "this is a serious password";
 
 const salt = 10;
 
 const db = mysql.createConnection({
   host: "localhost",
+  user: "root",
   password: "root",
   database: "express",
   JWT_SECRET: process.env.JWT_SECRET,
 });
-  
+
 db.connect((err) => {
   if (err) {
     console.error("Database connection failed:", err);

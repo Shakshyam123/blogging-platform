@@ -89,17 +89,7 @@ export default function About() {
               <h1 className="bold text-xl">RamThapa</h1>
               <p>Helper</p>
             </div>
-            <div>
-              <Image
-                src="/img.jpg"
-                alt="Example Image"
-                width={500}
-                height={500}
-                className="h-60 w-60 mb-8 rounded-full hover:h-64 hover:w-64"
-              />
-              <h1 className="bold text-xl">Sinchan</h1>
-              <p>Reviewer</p>
-            </div>
+            <div></div>
           </div>
         </div>
       </div>
