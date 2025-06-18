@@ -258,7 +258,6 @@ function BlogContent() {
                   <div className="flex mt-1">
                     <FontAwesomeIcon icon={faComment} className="mr-1 mb-2" />
                     23
-                    {/* {post.comments} */}
                   </div>
                 </div>
                 <div className="flex gap-5">

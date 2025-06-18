@@ -54,7 +54,7 @@ function Form() {
               placeholder="heading"
               {...register("heading", {})}
             />
-            ``
+
             <br />
             <label>content:</label>
             <textarea

@@ -1,7 +1,17 @@
 import Link from "next/link";
 import Navbar from "./navbar/page";
+import { useEffect } from "react";
 
 export default function Home() {
+  const user = false;
+  useEffect(() => {
+    first;
+
+    return () => {
+      second;
+    };
+  }, [third]);
+
   return (
     <main>
       {" "}
